@@ -1,0 +1,35 @@
+<?php
+
+$string['add_jobs'] = 'Add jobs';
+$string['backup_category'] = 'Backup Category';
+$string['cancel'] = 'Cancel';
+$string['column_action'] = 'Acció';
+$string['column_params'] = 'Paràmetres';
+$string['column_timestarted'] = 'Data iniciada';
+$string['column_type'] = 'Tipus';
+$string['column_state'] = 'Estat';
+$string['course_display'] = 'One section per page';
+$string['course_reset'] = 'Reset Curs';
+$string['creator'] = 'Creator';
+$string['filter_all'] = 'All';
+$string['filter_errors'] = 'Errors';
+$string['filter_finished'] = 'Ended';
+$string['filter_pending'] = 'Pending';
+$string['import_from_csv_file'] = 'Import from csv file';
+$string['parameters'] = 'Parameters';
+$string['pluginname'] = 'Batch jobs';
+$string['retry'] = 'Retry';
+$string['start_date'] = 'Start date';
+$string['state_error'] = 'Error: {$a}';
+$string['state_executing'] = 'Executing';
+$string['state_finished'] = 'Finished in {$a}';
+$string['state_waiting'] = 'Waiting';
+$string['type_create_course'] = 'Create course';
+$string['type_delete_course'] = 'Delete course';
+$string['type_import_course'] = 'Import course';
+$string['type_restart_course'] = 'Restart course';
+$string['view_create_courses'] = 'Create courses';
+$string['view_delete_courses'] = 'Remove courses';
+$string['view_import_courses'] = 'Import courses';
+$string['view_job_queue'] = 'Tasks queue';
+$string['view_restart_courses'] = 'Reset courses';

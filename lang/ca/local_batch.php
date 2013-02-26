@@ -1,0 +1,35 @@
+<?php
+
+$string['add_jobs'] = 'Afegeix tasques';
+$string['backup_category'] = 'Categoria de les còpies';
+$string['cancel'] = 'Cancel·la';
+$string['column_action'] = 'Acció';
+$string['column_params'] = 'Paràmetres';
+$string['column_timestarted'] = 'Data iniciada';
+$string['column_type'] = 'Tipus';
+$string['column_state'] = 'Estat';
+$string['course_display'] = 'Secció per pàgina';
+$string['course_reset'] = 'Curs reiniciat';
+$string['creator'] = 'Creador';
+$string['filter_all'] = 'Totes';
+$string['filter_errors'] = 'Errors';
+$string['filter_finished'] = 'Finalitzades';
+$string['filter_pending'] = 'Pendents';
+$string['import_from_csv_file'] = 'Importa des d\'un fitxer CSV';
+$string['parameters'] = 'Paràmetres';
+$string['pluginname'] = 'Tasques per lots';
+$string['retry'] = 'Reintenta';
+$string['start_date'] = 'Data d\'inici';
+$string['state_error'] = 'Error: {$a}';
+$string['state_executing'] = 'Executant-se';
+$string['state_finished'] = 'Finalitzada en {$a}';
+$string['state_waiting'] = 'Esperant';
+$string['type_create_course'] = 'Crea curs';
+$string['type_delete_course'] = 'Elimina curs';
+$string['type_import_course'] = 'Importa curs';
+$string['type_restart_course'] = 'Reinicia curs';
+$string['view_create_courses'] = 'Crea cursos';
+$string['view_delete_courses'] = 'Elimina cursos';
+$string['view_import_courses'] = 'Importa cursos';
+$string['view_job_queue'] = 'Cua de tasques';
+$string['view_restart_courses'] = 'Reinicia cursos';

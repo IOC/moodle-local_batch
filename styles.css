@@ -1,0 +1,109 @@
+.section {
+    margin-bottom: 20px;
+}
+
+.section h3 {
+    margin-bottom: 10px;
+}
+
+ul.params {
+    list-style-type: none;
+}
+
+ul.params li {
+    margin-bottom: 0.5em;
+}
+
+ul.params label {
+    padding-right: 0.5em;
+}
+
+ul.params input {
+    padding: 0.1em;
+    vertical-align: middle;
+    margin: 0;
+}
+
+#queue-table td,
+#queue-table th {
+    padding: 5px 10px;
+}
+
+#queue-table {
+    width: 100%;
+    margin: 0 auto;
+}
+
+#queue-filter {
+    margin-bottom: 10px;
+}
+
+#course-tree li,
+.batch_assign_roles {
+    list-style: none;
+}
+
+#course-tree li input {
+    vertical-align: middle;
+    margin: 0;
+}
+
+.js-only {
+    display: none;
+}
+
+#course-list {
+    margin: 0;
+}
+
+.actions {
+    margin: 5px 0;
+}
+
+#course-tree ul.categories,
+#course-tree ul.subcategories,
+#course-tree ul.courses {
+    margin: 0;
+    cursor: pointer;
+}
+
+#course-tree .course_category_tree li.category {
+    margin: 0 0 0 1em;
+}
+
+.course_category_tree .category_group {
+    overflow: hidden;
+    padding: 0 0 0 15px;
+    background-repeat: no-repeat;
+    background-position: 0 3px;
+    background-image: url('../../pix/t/switch_minus.gif');
+}
+
+.course_category_tree .category_group.batch_hidden {
+    background-image: url('../../pix/t/switch_plus.gif');
+}
+
+.course_category_tree li label,
+.batch_assign_roles label {
+    cursor: pointer;
+}
+
+.course_category_tree .course label {
+    margin-left: 0.3em;
+    vertical-align: middle;
+}
+
+.batch_hidden > ul {
+    display: none;
+}
+
+.batch_restart_courses input,
+.batch_create_courses input {
+    vertical-align: middle;
+}
+
+.batch_param {
+    display: inline-block;
+    min-width: 9em;
+    font-weight: bold;
+}
