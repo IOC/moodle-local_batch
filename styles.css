@@ -1,5 +1,7 @@
 .section {
-    margin-bottom: 20px;
+    clear: both;
+    margin-bottom: 10px;
+    padding-top: 10px;
 }
 
 .section h3 {
@@ -106,4 +108,9 @@ ul.params input {
     display: inline-block;
     min-width: 9em;
     font-weight: bold;
+}
+
+.batch_category {
+    clear: both;
+    padding-top: 1em;
 }

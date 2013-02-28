@@ -370,7 +370,7 @@ class local_batch_renderer extends plugin_renderer_base {
         );
         $content .= html_writer::empty_tag('input', $params);
         $content .= $this->output->container_end();//close startdate
-        $content .= $this->output->container_start('', 'category');
+        $content .= $this->output->container_start('batch_category', 'category');
         $content .= html_writer::label(get_string('backup_category', 'local_batch'), 'category');
         $content .= $this->print_category_menu('categorydest', $info['category']);
         $content .= $this->output->container_end();//close category
@@ -490,7 +490,7 @@ class local_batch_renderer extends plugin_renderer_base {
         );
         $content .= html_writer::empty_tag('input', $params);
         $content .= $this->output->container_end();//close startdate
-        $content .= $this->output->container_start('', 'category');
+        $content .= $this->output->container_start('batch_category', 'category');
         $content .= html_writer::label(get_string('backup_category', 'local_batch'), 'category');
         $content .= $this->print_category_menu('categorydest', $info['category']);
         $content .= $this->output->container_end();//close category

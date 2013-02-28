@@ -1,7 +1,9 @@
 <?php
 
 $string['add_jobs'] = 'Afegeix tasques';
-$string['backup_category'] = 'Categoria de les còpies';
+$string['backup_category'] = 'Categoria';
+$string['batch_start_hour'] = 'Hora d\'inici de les tasques per lots';
+$string['batch_stop_hour'] = 'Hora d\'aturada de les tasques per lots';
 $string['cancel'] = 'Cancel·la';
 $string['column_action'] = 'Acció';
 $string['column_params'] = 'Paràmetres';

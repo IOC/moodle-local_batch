@@ -1,7 +1,9 @@
 <?php
 
 $string['add_jobs'] = 'Add jobs';
-$string['backup_category'] = 'Backup Category';
+$string['backup_category'] = 'Category';
+$string['batch_start_hour'] = 'Batch start hour';
+$string['batch_stop_hour'] = 'Batch stop hour';
 $string['cancel'] = 'Cancel';
 $string['column_action'] = 'Acció';
 $string['column_params'] = 'Paràmetres';
