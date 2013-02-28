@@ -199,7 +199,19 @@ class batch_queue {
         if ($job = self::get_job($id)) {
             $context = context_coursecat::instance($job->category);
             if (has_capability('moodle/category:manage', $context) and $job->error) {
-                self::add_job($job->category, $job->type, $job->params);
+                $newjob = self::add_job($job->user, $job->category, $job->type, $job->params);
+                $fs = get_file_storage();
+                $af = $fs->get_area_files($context->id, 'local_batch', 'job', $job->id, 'filename', false);
+                if ($af) {
+                    $newfile = array(
+                        'component' => 'local_batch',
+                        'filearea'  => 'job',
+                        'contextid' => $context->id,
+                        'itemid'    => $newjob->id
+                    );
+                    $file = array_shift($af);
+                    $fs->create_file_from_storedfile((object) $newfile, $file->get_id());
+                }
             }
         }
     }
