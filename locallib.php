@@ -56,14 +56,14 @@ class batch_job {
     }
 
     function execute() {
+        global $DB;
+
         $type = batch_type($this->type);
         $this->timestarted = time();
         $this->save();
-        try {
-            $type->execute($this->id, $this->category, $this->params);
-        } catch (Exception $e) {
-            $this->error = $e->getMessage();
-        }
+        $transaction = $DB->start_delegated_transaction();
+        $type->execute($this->id, $this->category, $this->params);
+        $transaction->allow_commit();
         $this->timeended = time();
         $this->save();
     }
@@ -87,12 +87,10 @@ class batch_job {
 
     function delete() {
         global $DB;
-        $transaction = $DB->start_delegated_transaction();
         $context = context_coursecat::instance($this->category);
         $DB->delete_records('local_batch_jobs', array('id' => $this->id));
         $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'local_batch', 'job', $this->id);
-        $transaction->allow_commit();
     }
 
 }
@@ -339,7 +337,6 @@ class batch_course {
     public static function backup_course($courseid) {
         global $DB, $USER;
 
-        $transaction = $DB->start_delegated_transaction();
         $bc = new backup_controller(backup::TYPE_1COURSE, $courseid, backup::FORMAT_MOODLE,
                         backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
         //Set own properties
@@ -350,7 +347,6 @@ class batch_course {
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination']; // may be empty if file already moved to target location
-        $transaction->allow_commit();
         return $file;
     }
 
@@ -393,7 +389,6 @@ class batch_course {
         } else {
             $catid = $params->category;
         }
-        $transaction = $DB->start_delegated_transaction();
         if (!isset($params->fullname) or !isset($params->shortname)) {
             list($params->fullname, $params->shortname) = restore_dbops::calculate_course_names(0,
                                                             get_string('restoringcourse', 'backup'),
@@ -433,7 +428,6 @@ class batch_course {
             fulldelete($pathname);
             fulldelete("$CFG->tempdir/backup/$tempdir/");
         }
-        $transaction->allow_commit();
         return $courseid;
     }
 
