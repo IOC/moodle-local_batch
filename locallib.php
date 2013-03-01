@@ -395,11 +395,16 @@ class batch_course {
                                                             get_string('restoringcourseshortname', 'backup'));
         }
         $courseid = restore_dbops::create_new_course($params->fullname, $params->shortname, $catid);
-        $pathname = $file->copy_content_to_temp('/backup');
+        if ($file->is_external_file()) {
+            $reference = preg_replace('/^\//', '' , $file->get_reference());
+            $repository = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
+            $pathname = $repository->root_path . $reference;
+        } else {
+            $pathname = "$CFG->tempdir/backup/" . basename($file->copy_content_to_temp('/backup'));
+        }
         $tempdir = restore_controller::get_tempdir_name($context->id, $USER->id);
         $fb = get_file_packer();
-        $files = $fb->extract_to_pathname("$CFG->tempdir/backup/".basename($pathname),
-                        "$CFG->tempdir/backup/$tempdir/");
+        $files = $fb->extract_to_pathname($pathname, "$CFG->tempdir/backup/$tempdir/");
         $rc = new restore_controller($tempdir, $courseid, backup::INTERACTIVE_NO,
                         backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
         if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
@@ -425,7 +430,9 @@ class batch_course {
 
         //Remove temp backup
         if ($files) {
-            fulldelete($pathname);
+            if (!$file->is_external_file()) {
+                fulldelete($pathname);
+            }
             fulldelete("$CFG->tempdir/backup/$tempdir/");
         }
         return $courseid;

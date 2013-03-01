@@ -22,18 +22,17 @@ require_once('locallib.php');
 const LOCAL_BATCH_PERPAGE = 10;
 
 function local_batch_extends_settings_navigation($nav, $context) {
-    if (has_capability('moodle/category:manage', $context)) {
-        if (context_system::instance() == $context) {
-            $node = navigation_node::create(get_string('pluginname', 'local_batch'), 
-                            new moodle_url('/local/batch/index.php',
-                            array('category' => 0)),
-                            navigation_node::TYPE_ROOTNODE,
-                            'local_batch',
-                            'local_batch',
-                            new pix_icon('icon', '', 'local_batch'));
-            $settings = $nav->get('root');
-            $settings->children->add($node);
-        } elseif ($context->contextlevel == CONTEXT_COURSECAT) {
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        $node = navigation_node::create(get_string('pluginname', 'local_batch'),
+                        new moodle_url('/local/batch/index.php',
+                        array('category' => 0)),
+                        navigation_node::TYPE_ROOTNODE,
+                        'local_batch',
+                        'local_batch',
+                        new pix_icon('icon', '', 'local_batch'));
+        $settings = $nav->get('root');
+        $settings->children->add($node);
+    } elseif (has_capability('moodle/category:manage', $context) and $context->contextlevel == CONTEXT_COURSECAT) {
             $node = navigation_node::create(get_string('pluginname', 'local_batch'), 
                             new moodle_url('/local/batch/index.php',
                             array('category' => $context->instanceid)),
@@ -43,7 +42,6 @@ function local_batch_extends_settings_navigation($nav, $context) {
                             new pix_icon('icon', '', 'local_batch'));
             $settings = $nav->get('categorysettings');
             $settings->children->add($node);
-        }
     }
 }
 
