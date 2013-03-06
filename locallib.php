@@ -527,6 +527,22 @@ class batch_course {
         }
      }
 
+    public static function change_prefix($courseid, $prefix) {
+        global $DB;
+        $course = $DB->get_record('course', array('id' => $courseid));
+
+        if (preg_match('/^\[.*?\](.*)$/', $course->fullname, $match)) {
+            $course->fullname = trim($match[1]);
+        }
+
+        if ($prefix) {
+            $course->fullname = "[$prefix] {$course->fullname}";
+        }
+
+        return $DB->update_record('course', $course);
+    }
+
+
     public static function change_suffix($courseid, $suffix) {
         global $DB;
         $course = $DB->get_record('course', array('id' => $courseid));

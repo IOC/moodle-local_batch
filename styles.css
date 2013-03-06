@@ -114,3 +114,7 @@ ul.params input {
     clear: both;
     padding-top: 1em;
 }
+
+.batch_delimiter {
+    margin: 0 0.5em;
+}

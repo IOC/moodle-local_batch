@@ -239,6 +239,12 @@ if ($view == 'job_queue') {
         foreach ($data as $name => $value) {
             if (preg_match("/^course-(\d+)$/", $name, $match)) {
                 $courseid = (int) $match[1];
+                $data['prefix'] = preg_replace('/[\[\]]*/', '', $data['prefix']);
+                if (!empty($data['remove_prefix'])) {
+                    batch_course::change_prefix($courseid, false);
+                } elseif (trim($data['prefix'])) {
+                    batch_course::change_prefix($courseid, $data['prefix']);
+                }
                 if ($data['suffix']) {
                     if (!batch_course::change_suffix($courseid, $data['suffix'])) {
                         $errors[] = $courseid;

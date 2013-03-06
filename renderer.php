@@ -588,7 +588,25 @@ class local_batch_renderer extends plugin_renderer_base {
         $content .= $this->output->container_end();//close section
         $content .= $this->output->container_start('section');
         $content .= $this->output->heading(get_string('parameters', 'local_batch'), 3);
-        $content .= $this->output->container_start('course-sufix');
+        $content .= $this->output->container_start('course-prefix');
+        $content .= html_writer::label(get_string('prefix', 'local_batch'), 'prefix');
+        $params = array(
+            'id'   => 'prefix',
+            'type' => 'text',
+            'name' => 'prefix'
+        );
+        $content .= html_writer::tag('span', '[', array('class' => 'batch_delimiter'));
+        $content .= html_writer::empty_tag('input', $params);
+        $content .= html_writer::tag('span', ']', array('class' => 'batch_delimiter'));
+        $params = array(
+            'id'   => 'remove_prefix',
+            'type' => 'checkbox',
+            'name' => 'remove_prefix'
+        );
+        $content .= html_writer::empty_tag('input', $params);
+        $content .= html_writer::label(get_string('remove', 'local_batch'), 'remove_prefix');
+        $content .= $this->output->container_end();//close course-prefix
+        $content .= $this->output->container_start('course-suffix');
         $content .= html_writer::label(get_string('suffix', 'local_batch'), 'suffix');
         $options = array(
             'none'      => get_string('suffix_none', 'local_batch'),
@@ -596,7 +614,7 @@ class local_batch_renderer extends plugin_renderer_base {
             'imported'  => get_string('suffix_imported', 'local_batch')
         );
         $content .= html_writer::select($options, 'suffix', '', array('' => ''), array('id' => 'suffix'));
-        $content .= $this->output->container_end();//close course-sufix
+        $content .= $this->output->container_end();//close course-suffix
         $content .= $this->output->container_start('course-visible');
         $content .= html_writer::label(get_string('visible'), 'visible');
         $options = array(
