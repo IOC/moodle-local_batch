@@ -381,7 +381,7 @@ class batch_course {
         }
     }
 
-    public static function restore_backup($file, $context, $params, $category = null) {
+    public static function restore_backup($file, $context, $params, $category = null, $import = false) {
         global $CFG, $DB, $USER;
 
         if ($category) {
@@ -395,12 +395,16 @@ class batch_course {
                                                             get_string('restoringcourseshortname', 'backup'));
         }
         $courseid = restore_dbops::create_new_course($params->fullname, $params->shortname, $catid);
-        if ($file->is_external_file()) {
-            $reference = preg_replace('/^\//', '' , $file->get_reference());
-            $repository = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
-            $pathname = $repository->root_path . $reference;
+        if ($import) {
+            $pathname = $file;
         } else {
-            $pathname = "$CFG->tempdir/backup/" . basename($file->copy_content_to_temp('/backup'));
+            if ($file->is_external_file()) {
+                $reference = preg_replace('/^\//', '' , $file->get_reference());
+                $repository = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
+                $pathname = $repository->root_path . $reference;
+            } else {
+                $pathname = "$CFG->tempdir/backup/" . basename($file->copy_content_to_temp('/backup'));
+            }
         }
         $tempdir = restore_controller::get_tempdir_name($context->id, $USER->id);
         $fb = get_file_packer();
@@ -409,8 +413,10 @@ class batch_course {
                         backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
         if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
             $rc->convert();
-            $params->fullname = $rc->get_info()->original_course_fullname;
-            $params->shortname = $rc->get_info()->original_course_shortname;
+            if ($import) {
+                $params->fullname = $rc->get_info()->original_course_fullname;
+                $params->shortname = $rc->get_info()->original_course_shortname . '*';
+            }
         }
         $rc->execute_precheck();
 
@@ -430,7 +436,7 @@ class batch_course {
 
         //Remove temp backup
         if ($files) {
-            if (!$file->is_external_file()) {
+            if (!$import and !$file->is_external_file()) {
                 fulldelete($pathname);
             }
             fulldelete("$CFG->tempdir/backup/$tempdir/");

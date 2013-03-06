@@ -204,9 +204,8 @@ if ($view == 'job_queue') {
             }
             $categorydest  = (int) $data['categorydest'];
             $coursedisplay = !empty($data['coursedisplay']);
-            $fs = get_file_storage();
             $context = context_user::instance($USER->id);
-            if ($files = $fs->get_area_files($context->id, 'user', 'draft', $data['choose-backup'], 'id DESC', false)) {
+            if (!empty($data['choose-backup'])) {
                 $params = array(
                     'startday'      => $startday,
                     'startmonth'    => $startmonth,
@@ -215,20 +214,13 @@ if ($view == 'job_queue') {
                     'coursedisplay' => $coursedisplay
                 );
                 $context = context_coursecat::instance($categorydest);
-                $newfile = array(
-                    'component' => 'local_batch',
-                    'filearea'  => 'job',
-                    'contextid' => $context->id,
-                );
+                $files = optional_param_array('choose-backup', '', PARAM_PATH);
                 foreach ($files as $file) {
+                    $params['file'] = $file;
                     $job = batch_queue::add_job($USER->id, $categorydest, 'import_course', (object) $params);
-                    $newfile['itemid'] = $job->id;
-                    $fs->create_file_from_storedfile((object) $newfile, $file->get_id());
                 }
                 redirect(new moodle_url('/local/batch/index.php', array('category' => $category)));
             }
-        } else {
-            $draftareaid = file_get_submitted_draft_itemid('choose-backup');
         }
     }
     echo $OUTPUT->header();
@@ -239,7 +231,6 @@ if ($view == 'job_queue') {
     $data['startyear']   = $date['year'];
     $data['startmonth']  = $date['mon'];
     $data['startday']    = $date['mday'];
-    $data['draftareaid'] = isset($draftareaid)?$draftareaid:0;
     echo $batchoutput->print_import_courses($data);
 }
 echo $OUTPUT->footer();

@@ -442,7 +442,7 @@ class local_batch_renderer extends plugin_renderer_base {
     }
 
     function print_import_courses($info) {
-        global $SITE;
+        global $CFG, $SITE;
 
         $content = $this->output->container_start('batch_create_courses');
         $content .= html_writer::start_tag('form', array('id' => 'form', 'method' => 'post'));
@@ -468,14 +468,33 @@ class local_batch_renderer extends plugin_renderer_base {
             'value' => $SITE->id
         );
         $content .= html_writer::empty_tag('input', $params);
-        $options = array(
-            'accepted_types' => '.zip'
-        );
-        $df = new MoodleQuickForm_filemanager('choose-backup', '', array('id' => 'choose-backup'), $options);
-        if ($info['draftareaid']) {
-            $df->setValue($info['draftareaid']);
+        if (!empty($CFG->local_batch_path_backups)) {
+            $files = get_directory_list($CFG->dataroot . $CFG->local_batch_path_backups);
+
+            $filter = function($value) {
+                return preg_match('/\.zip$/', $value);
+            };
+
+            $files = array_filter($files, $filter);
+
+            $content .= html_writer::start_tag('ul', array('class' => 'batch_assign_roles'));
+            foreach ($files as $key => $file) {
+                $params = array(
+                    'id' => 'choose-backup[' . $key .']',
+                    'name' => 'choose-backup[]',
+                    'type' => 'checkbox',
+                    'value' => $file
+                );
+                $content .= html_writer::start_tag('li');
+                $content .= html_writer::empty_tag('input', $params);
+                $content .= html_writer::label(basename($file), 'choose-backup[' . $key . ']');
+                $content .= html_writer::end_tag('li');
+            }
+            $content .= html_writer::end_tag('ul');
+        } else {
+            $content .= html_writer::tag('div', get_string('nobackupfolder', 'local_batch'));
         }
-        $content .= $df->toHtml();
+
         $content .= $this->output->container_end('section');//close backup files section
         $content .= $this->output->container_start('section');
         $content .= $this->output->heading(get_string('parameters', 'local_batch'), 3);
@@ -521,14 +540,10 @@ class local_batch_renderer extends plugin_renderer_base {
 
     function print_info_import_courses($params) {
         $info = '';
-        if (!is_null($params['attach'])) {
-            $iconimage = $this->output->pix_icon(file_file_icon($params['attach']), get_mimetype_description($params['attach']), 
-                                        'moodle', array('class' => 'icon'));
-            $info .= html_writer::start_tag('div')
-                . html_writer::tag('span',get_string('backup'), array('class' => 'batch_param'))
-                . html_writer::link($params['fileurl'], $iconimage) . html_writer::link($params['fileurl'], $params['filename'])
-                . html_writer::end_tag('div');
-        }
+        $info .= html_writer::start_tag('div')
+            . html_writer::tag('span',get_string('backup'), array('class' => 'batch_param'))
+            . $params['filename']
+            . html_writer::end_tag('div');
         if (is_int($params['courseid'])) {
             $info .= html_writer::start_tag('div')
             . html_writer::tag('span',get_string('fullname'), array('class' => 'batch_param'))

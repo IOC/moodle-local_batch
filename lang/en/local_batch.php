@@ -2,6 +2,8 @@
 
 $string['add_jobs'] = 'Add jobs';
 $string['backup_category'] = 'Category';
+$string['batch_path_backups'] = 'Path to backups';
+$string['batch_path_backups_desc'] = 'Path is {$a} relative';
 $string['batch_start_hour'] = 'Batch start hour';
 $string['batch_stop_hour'] = 'Batch stop hour';
 $string['cancel'] = 'Cancel';
@@ -18,6 +20,7 @@ $string['filter_errors'] = 'Errors';
 $string['filter_finished'] = 'Ended';
 $string['filter_pending'] = 'Pending';
 $string['import_from_csv_file'] = 'Import from csv file';
+$string['nobackupfolder'] = 'No backup folder configured';
 $string['parameters'] = 'Parameters';
 $string['pluginname'] = 'Batch jobs';
 $string['retry'] = 'Retry';

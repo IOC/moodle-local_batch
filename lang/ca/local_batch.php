@@ -2,6 +2,8 @@
 
 $string['add_jobs'] = 'Afegeix tasques';
 $string['backup_category'] = 'Categoria';
+$string['batch_path_backups'] = 'Ruta on es troben els backups';
+$string['batch_path_backups_desc'] = 'La ruta es relativa al directori {$a}';
 $string['batch_start_hour'] = 'Hora d\'inici de les tasques per lots';
 $string['batch_stop_hour'] = 'Hora d\'aturada de les tasques per lots';
 $string['cancel'] = 'Cancel·la';
@@ -18,6 +20,7 @@ $string['filter_errors'] = 'Errors';
 $string['filter_finished'] = 'Finalitzades';
 $string['filter_pending'] = 'Pendents';
 $string['import_from_csv_file'] = 'Importa des d\'un fitxer CSV';
+$string['nobackupfolder'] = 'No hi ha cap carpeta de backups configurada';
 $string['parameters'] = 'Paràmetres';
 $string['pluginname'] = 'Tasques per lots';
 $string['retry'] = 'Reintenta';
