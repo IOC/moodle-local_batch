@@ -232,5 +232,47 @@ if ($view == 'job_queue') {
     $data['startmonth']  = $date['mon'];
     $data['startday']    = $date['mday'];
     echo $batchoutput->print_import_courses($data);
+} elseif ($view == 'config_courses') {
+    if ($data = batch_data_submitted()) {
+        $errors = array();
+        $courses = false;
+        foreach ($data as $name => $value) {
+            if (preg_match("/^course-(\d+)$/", $name, $match)) {
+                $courseid = (int) $match[1];
+                if ($data['suffix']) {
+                    if (!batch_course::change_suffix($courseid, $data['suffix'])) {
+                        $errors[] = $courseid;
+                    }
+                }
+                if ($data['visible'] == 'yes') {
+                    batch_course::show_course($courseid);
+                } elseif ($data['visible'] == 'no') {
+                    batch_course::hide_course($courseid);
+                }
+                $courses = true;
+            }
+        }
+        $url = new moodle_url('/local/batch/index.php', array('category' => $category, 'view' => 'config_courses'));
+        if ($errors) {
+            $message = html_writter::tag('p',get_string('config_courses_error', 'local_batch'));
+            $message .= html_writter::start_tag('ul');
+            foreach ($errors as $courseid) {
+                $message .= html_writter::tag('li', $DB->get_field('course', 'fullname', array('id' => $courseid)));
+            }
+            $message .= html_writter::end_tag('ul');
+        } elseif ($courses) {
+            $message = get_string('config_courses_ok', 'local_batch');
+        } else {
+            redirect($url);
+        }
+        echo $OUTPUT->header();
+        echo $OUTPUT->box($message);
+        echo $OUTPUT->continue_button($url);
+    } else {
+        echo $OUTPUT->header();
+        echo $batchoutput->print_header($view, $category);
+        $courses = batch_get_category_and_subcategories_info($category);
+        echo $batchoutput->print_config_courses($courses);
+    }
 }
 echo $OUTPUT->footer();

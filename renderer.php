@@ -26,7 +26,8 @@ class local_batch_renderer extends plugin_renderer_base {
         'create_courses',
         'delete_courses',
         'restart_courses',
-        'import_courses');
+        'import_courses',
+        'config_courses');
 
     function print_header($current_view, $category) {
         $tabrow = array();
@@ -567,6 +568,55 @@ class local_batch_renderer extends plugin_renderer_base {
             . fullname($params['user'])
             . html_writer::end_tag('div');
         return $info;
+    }
+
+    function print_config_courses($courses) {
+        $content = $this->output->container_start('batch_create_courses');
+        $content .= html_writer::start_tag('form', array('id' => 'form', 'method' => 'post'));
+        $params = array(
+            'id' => 'sesskey',
+            'type' => 'hidden',
+            'name' => 'sesskey',
+            'value' => sesskey()
+        );
+        $content .= html_writer::empty_tag('input', $params);
+        $content .= $this->output->container_start('section');
+        $content .= $this->output->heading(get_string('courses'), 3);
+        $content .= $this->output->container_start('', 'course-tree');
+        $content .= $this->print_course_menu($courses);
+        $content .= $this->output->container_end();//close course-tree
+        $content .= $this->output->container_end();//close section
+        $content .= $this->output->container_start('section');
+        $content .= $this->output->heading(get_string('parameters', 'local_batch'), 3);
+        $content .= $this->output->container_start('course-sufix');
+        $content .= html_writer::label(get_string('suffix', 'local_batch'), 'suffix');
+        $options = array(
+            'none'      => get_string('suffix_none', 'local_batch'),
+            'restarted' => get_string('suffix_restarted', 'local_batch'),
+            'imported'  => get_string('suffix_imported', 'local_batch')
+        );
+        $content .= html_writer::select($options, 'suffix', '', array('' => ''), array('id' => 'suffix'));
+        $content .= $this->output->container_end();//close course-sufix
+        $content .= $this->output->container_start('course-visible');
+        $content .= html_writer::label(get_string('visible'), 'visible');
+        $options = array(
+            'yes' => get_string('yes'),
+            'no'  => get_string('no')
+        );
+        $content .= html_writer::select($options, 'visible', '', array('' => ''), array('id' => 'visible'));
+        $content .= $this->output->container_end();//close course-visible
+        $content .= $this->output->container_start('section');
+        $params = array(
+            'type' => 'submit',
+            'name' => 'config',
+            'value' => get_string('configure', 'local_batch')
+        );
+        $content .= html_writer::empty_tag('input', $params);
+        $content .= $this->output->container_end();//close section
+        $content .= $this->output->container_end();//close parameters
+        $content .= html_writer::end_tag('form');
+        $content .= $this->output->container_end();//close section
+        return $content;
     }
 
     function strtime($time) {

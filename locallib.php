@@ -352,6 +352,7 @@ class batch_course {
 
     public static function delete_course($courseid) {
         global $CFG, $DB;
+
         if (!$DB->record_exists('course', array('id' => $courseid))) {
             throw new Exception('delete_course: nonexistent_course ' . $courseid);
         }
@@ -366,6 +367,14 @@ class batch_course {
 
         if (!$DB->set_field('course', 'visible', 0, array('id' => $courseid))) {
             throw new Exception('hide_course');
+        }
+    }
+
+    public static function show_course($courseid) {
+        global $DB;
+
+        if (!$DB->set_field('course', 'visible', 1, array('id' => $courseid))) {
+            throw new Exception('show course');
         }
     }
 
@@ -517,4 +526,30 @@ class batch_course {
             tool_assignmentupgrade_upgrade_assignment($record->id);
         }
      }
+
+    public static function change_suffix($courseid, $suffix) {
+        global $DB;
+        $course = $DB->get_record('course', array('id' => $courseid));
+
+        if (preg_match('/^(.*)([~\*])$/', $course->shortname, $match)) {
+            $course->shortname = $match[1];
+            if ($match[2] == '~') {
+                if (preg_match('/(.*) ~ .*?$/', $course->fullname, $match)) {
+                    $course->fullname = $match[1];
+                }
+            }
+        }
+
+        if ($suffix == 'restarted') {
+            $course->shortname .= '~';
+            $course->fullname .= strftime(' ~ %B %G');
+        } elseif ($suffix == 'imported') {
+            $course->shortname .= '*';
+        }
+
+        $id = $DB->get_field('course', 'id', array('shortname' => $course->shortname));
+        if (!$id or $id == $courseid) {
+            return $DB->update_record('course', $course);
+        }
+    }
 }
