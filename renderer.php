@@ -469,7 +469,7 @@ class local_batch_renderer extends plugin_renderer_base {
         );
         $content .= html_writer::empty_tag('input', $params);
         if (!empty($CFG->local_batch_path_backups)) {
-            $files = get_directory_list($CFG->dataroot . $CFG->local_batch_path_backups);
+            $files = get_directory_list($CFG->dataroot . '/' . $CFG->local_batch_path_backups);
 
             $filter = function($value) {
                 return preg_match('/\.zip$/', $value);

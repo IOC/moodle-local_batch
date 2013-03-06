@@ -19,7 +19,7 @@ if ($hassiteconfig) {
 
     $settings->add(
         new admin_setting_configtext('local_batch_path_backups',
-                                       get_string('batch_path_backups', 'local_batch'), get_string('batch_path_backups_desc', 'local_batch', $CFG->dataroot),
+                                       get_string('batch_path_backups', 'local_batch'), get_string('batch_path_backups_desc', 'local_batch', $CFG->dataroot . '/'),
                                        '', PARAM_URL, 50)
     );
     $ADMIN->add('localplugins', $settings);

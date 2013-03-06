@@ -30,7 +30,7 @@ class batch_type_import_course extends batch_type_base {
         if (preg_match('/\/$/', $CFG->local_batch_path_backups)) {
             $slash = '';
         }
-        $filepath = $CFG->dataroot . $CFG->local_batch_path_backups . $slash . $params->file;
+        $filepath = $CFG->dataroot . '/' . $CFG->local_batch_path_backups . $slash . $params->file;
         $params->courseid = batch_course::restore_backup($filepath, $context, $params, null, true);
         batch_course::assignmentupgrade($params->courseid);
         $enrol = new enrol_manual_plugin();
