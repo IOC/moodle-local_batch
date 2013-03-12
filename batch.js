@@ -88,6 +88,14 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
         batch_add_row();
     }, '#add-course');
 
+    Y.on('click', function(e) {
+        if (this.get('checked')) {
+            Y.one('#prefix').setAttribute('disabled', 'disabled');
+        } else {
+            Y.one('#prefix').removeAttribute('disabled');
+        }
+    }, '#remove_prefix');
+
     Y.on('contentready', function() {
         if (M.form.dateselector.calendar) {
             M.form.dateselector.calendar.selectEvent.subscribe(batch_get_selected_date);
