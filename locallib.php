@@ -341,7 +341,8 @@ class batch_course {
                         backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
         //Set own properties
         $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename(backup::FORMAT_MOODLE, backup::TYPE_1COURSE, $courseid, false, false));
-        $bc->get_plan()->get_setting('users')->set_value(false);
+        $bc->get_plan()->get_setting('users')->set_value(true);
+        $bc->get_plan()->get_setting('calendarevents')->set_value(true);
         $bc->set_status(backup::STATUS_AWAITING);
         //Execute backup
         $bc->execute_plan();
@@ -451,15 +452,6 @@ class batch_course {
             fulldelete("$CFG->tempdir/backup/$tempdir/");
         }
         return $courseid;
-    }
-
-    public static function insert_role_assignment($courseid, $userid, $roleid) {
-        global $DB;
-
-        $plugin = enrol_get_plugin('manual');
-        $conditions = array('enrol' => 'manual', 'courseid' => $courseid);
-        $enrol = $DB->get_record('enrol', $conditions, '*', MUST_EXIST);
-        $plugin->enrol_user($enrol, $userid, $roleid);
     }
 
     public static function get_user_assignments_by_course($courseid) {

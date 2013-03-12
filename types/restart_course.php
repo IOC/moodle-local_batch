@@ -44,23 +44,43 @@ class batch_type_restart_course extends batch_type_base {
         batch_course::hide_course($course->id);
         batch_course::rename_course($course->id, $old_shortname, $old_fullname);
         $params->fullname = $course->fullname;
-        $context = context_course::instance($course->id);
+        $context = context_course::instance($course->id);//old course
         $params->courseid = batch_course::restore_backup($file, $context, $params, $course->category);
+        $context = context_course::instance($params->courseid);//new course
 
         if (!empty($params->roleassignments)) {
+            $participants = batch_course::get_user_assignments_by_course($params->courseid);
             $roleids = explode(',', $params->roleassignments);
+            $listusers = array();
             foreach ($roleids as $roleid) {
                 $users = get_role_users($roleid, $context);
-                foreach ($users as $key => $user) {
-                    batch_course::insert_role_assignment($params->courseid, $user->id, $roleid);
+                foreach ($users as $user) {
+                    $listusers[$user->id] = true;
                 }
+            }
+            $plugin = enrol_get_plugin('manual');
+            $conditions = array('enrol' => 'manual', 'courseid' => $params->courseid);
+            $enrol = $DB->get_record('enrol', $conditions, '*', MUST_EXIST);
+            $userstodelete = array_diff_key($participants, $listusers);
+            foreach ($userstodelete as $user) {
+                $plugin->unenrol_user($enrol, $user->id);
+            }
+        } else {
+            $plugin = enrol_get_plugin('manual');
+            $conditions = array('enrol' => 'manual', 'courseid' => $params->courseid);
+            $enrol = $DB->get_record('enrol', $conditions, '*', MUST_EXIST);
+            $participants = batch_course::get_user_assignments_by_course($params->courseid);
+            foreach ($participants as $user) {
+                $plugin->unenrol_user($enrol, $user->id);
             }
         }
         if (isset($params->groups) and $params->groups) {
             //Groups from source
             $groups = groups_get_all_groups($course->id);
             //Participants from destination
-            $participants = batch_course::get_user_assignments_by_course($params->courseid);
+            if (!isset($participants) or empty($participants)) {
+                $participants = batch_course::get_user_assignments_by_course($params->courseid);
+            }
             $destination_groups = $DB->get_records_menu('groups', array('courseid' => $params->courseid), '', 'id, name');
             foreach ($groups as $group) {
                 if ($groupid = array_search($group->name, $destination_groups)) {
