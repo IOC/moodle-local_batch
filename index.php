@@ -260,12 +260,12 @@ if ($view == 'job_queue') {
         }
         $url = new moodle_url('/local/batch/index.php', array('category' => $category, 'view' => 'config_courses'));
         if ($errors) {
-            $message = html_writter::tag('p',get_string('config_courses_error', 'local_batch'));
-            $message .= html_writter::start_tag('ul');
+            $message = html_writer::tag('p',get_string('config_courses_error', 'local_batch'));
+            $message .= html_writer::start_tag('ul');
             foreach ($errors as $courseid) {
-                $message .= html_writter::tag('li', $DB->get_field('course', 'fullname', array('id' => $courseid)));
+                $message .= html_writer::tag('li', $DB->get_field('course', 'fullname', array('id' => $courseid)));
             }
-            $message .= html_writter::end_tag('ul');
+            $message .= html_writer::end_tag('ul');
         } elseif ($courses) {
             $message = get_string('config_courses_ok', 'local_batch');
         } else {
