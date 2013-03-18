@@ -32,16 +32,17 @@ function local_batch_extends_settings_navigation($nav, $context) {
                         new pix_icon('icon', '', 'local_batch'));
         $settings = $nav->get('root');
         $settings->children->add($node);
-    } elseif (has_capability('moodle/category:manage', $context) and $context->contextlevel == CONTEXT_COURSECAT) {
-            $node = navigation_node::create(get_string('pluginname', 'local_batch'), 
-                            new moodle_url('/local/batch/index.php',
-                            array('category' => $context->instanceid)),
-                            navigation_node::TYPE_SETTING,
-                            null,
-                            null,
-                            new pix_icon('icon', '', 'local_batch'));
-            $settings = $nav->get('categorysettings');
-            $settings->children->add($node);
+    }
+    if (has_capability('moodle/category:manage', $context) and $context->contextlevel == CONTEXT_COURSECAT) {
+        $node = navigation_node::create(get_string('pluginname', 'local_batch'),
+                        new moodle_url('/local/batch/index.php',
+                        array('category' => $context->instanceid)),
+                        navigation_node::TYPE_SETTING,
+                        null,
+                        null,
+                        new pix_icon('icon', '', 'local_batch'));
+        $settings = $nav->get('categorysettings');
+        $settings->children->add($node);
     }
 }
 
