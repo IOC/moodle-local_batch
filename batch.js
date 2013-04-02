@@ -115,8 +115,8 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
     if (Y.one('.category_group')) {
         Y.one('#course-tree').delegate('click', function(e) {
             e.stopPropagation();
-            this.toggleClass('batch_hidden');
-        }, '.category_group');
+            this.ancestor('li').toggleClass('batch_hidden');
+        }, '.category_group span');
 
         Y.one('#course-tree').delegate('click', function(e) {
             e.stopPropagation();

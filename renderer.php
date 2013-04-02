@@ -689,7 +689,7 @@ class local_batch_renderer extends plugin_renderer_base {
             $classes[] = 'category_group';
         }
         $content = html_writer::start_tag('li', array('class' => join(' ', $classes)));
-        $content .= $category->name;
+        $content .= html_writer::tag('span', $category->name);
         if ($hassubcategories) {
             $content .= html_writer::start_tag('ul', array('class' => 'subcategories'));
             foreach ($category->categories as $cat) {

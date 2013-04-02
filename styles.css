@@ -66,6 +66,9 @@ ul.params input {
 #course-tree ul.subcategories,
 #course-tree ul.courses {
     margin: 0;
+}
+
+#course-tree .category_group span{
     cursor: pointer;
 }
 
@@ -76,12 +79,16 @@ ul.params input {
 .course_category_tree .category_group {
     overflow: hidden;
     padding: 0 0 0 15px;
+}
+
+.course_category_tree .category_group span {
+    padding-left: 1em;
     background-repeat: no-repeat;
     background-position: 0 3px;
     background-image: url('../../pix/t/switch_minus.gif');
 }
 
-.course_category_tree .category_group.batch_hidden {
+.course_category_tree .category_group.batch_hidden span {
     background-image: url('../../pix/t/switch_plus.gif');
 }
 
