@@ -2,6 +2,7 @@
 
 $string['add_jobs'] = 'Afegeix tasques';
 $string['backup_category'] = 'Categoria';
+$string['batch:manage'] = 'Gestiona les tasques';
 $string['batch_path_backups'] = 'Ruta on es troben els backups';
 $string['batch_path_backups_desc'] = 'La ruta es relativa al directori {$a}';
 $string['batch_start_hour'] = 'Hora d\'inici de les tasques per lots';

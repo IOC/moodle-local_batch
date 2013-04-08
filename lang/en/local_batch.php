@@ -2,6 +2,7 @@
 
 $string['add_jobs'] = 'Add jobs';
 $string['backup_category'] = 'Category';
+$string['batch:manage'] = 'Manage tasks';
 $string['batch_path_backups'] = 'Path to backups';
 $string['batch_path_backups_desc'] = 'Path is {$a} relative';
 $string['batch_start_hour'] = 'Batch start hour';
@@ -10,13 +11,13 @@ $string['cancel'] = 'Cancel';
 $string['config_courses_error'] = 'Some courses haven\'t been configured due naming conflicts.';
 $string['config_courses_ok'] = 'Courses have been configured properly.';
 $string['configure'] = 'Configure';
-$string['column_action'] = 'Acció';
-$string['column_params'] = 'Paràmetres';
-$string['column_timestarted'] = 'Data iniciada';
-$string['column_type'] = 'Tipus';
-$string['column_state'] = 'Estat';
+$string['column_action'] = 'Action';
+$string['column_params'] = 'Parameters';
+$string['column_timestarted'] = 'Time started';
+$string['column_type'] = 'Type';
+$string['column_state'] = 'State';
 $string['course_display'] = 'One section per page';
-$string['course_reset'] = 'Reset Curs';
+$string['course_reset'] = 'Reset Course';
 $string['creator'] = 'Creator';
 $string['filter_all'] = 'All';
 $string['filter_errors'] = 'Errors';
