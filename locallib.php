@@ -320,7 +320,18 @@ function batch_get_user($userid) {
 }
 
 function batch_get_category_and_subcategories_info($category) {
-    $tree = get_course_category_tree();
+    global $DB;
+
+    $records = $DB->get_records_sql("SELECT id , name, path"
+                        . " FROM mdl_course_categories"
+                        . " ORDER BY sortorder"
+    );
+    $courses = batch_get_courses($category);
+    $tree = array();
+    foreach ($records as $record) {
+        batch_get_categories(explode('/', preg_replace('/^\//', '', $record->path)), $tree, $records, $courses);
+    }
+
     if ($category === 0) {
         return $tree;
     }
@@ -331,6 +342,51 @@ function batch_get_category_and_subcategories_info($category) {
         }
     }
     return array($result);
+}
+
+function batch_get_categories($cat, &$tree, $categories, $courses) {
+    if (empty($cat)) return 0;
+    $index = $cat[0];
+    if (!array_key_exists($index, $tree)) {
+        $obj = new stdClass();
+        $obj->id = $index;
+        $obj->name = $categories[$index]->name;
+        $obj->categories = array();
+        $obj->courses = (isset($courses[$index])?$courses[$index]:array());
+        $tree[$index] = $obj;
+    }
+    array_shift($cat);
+    batch_get_categories($cat, $tree[$index]->categories, $categories, $courses);
+}
+
+function batch_get_courses($category) {
+    global $DB;
+
+    $sqlwhere = '';
+
+    if ($category) {
+        $sqlwhere = " WHERE category = $category";
+    }
+    $sql = "SELECT id, visible, fullname, shortname, category"
+        . " FROM {course}"
+        . $sqlwhere
+        . " ORDER BY sortorder ASC";
+    $categoryids = array();
+    if ($courses = $DB->get_records_sql($sql)) {
+        foreach ($courses as $course) {
+            if ($course->id == SITEID) {
+                continue;
+            }
+            context_instance_preload($course);
+            if (!empty($course->visible) || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
+                if (!isset($categoryids[$course->category])) {
+                    $categoryids[$course->category] = array();
+                }
+                $categoryids[$course->category][$course->id] = $course;
+            }
+        }
+    }
+    return $categoryids;
 }
 
 class batch_course {
