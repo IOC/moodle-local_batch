@@ -21,6 +21,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+require_once($CFG->libdir . '/coursecatlib.php');
 
 define('BATCH_CRON_TIME', 600);
 define('BATCH_TODELETE_AGE', 90 * 86400);
@@ -162,7 +163,7 @@ class batch_queue {
         }
         if ($category) {
             $cat = batch_get_category($category);
-            make_categories_list($categories, $parents, 'moodle/category:manage', 0, $cat);
+            $categories = coursecat::make_categories_list('moodle/category:manage', $cat);
             $cats = array_keys($categories);
             $select .= ' AND category IN(' . implode(',', $cats) . ')';
         }

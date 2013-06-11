@@ -643,13 +643,11 @@ class local_batch_renderer extends plugin_renderer_base {
 
     function print_category_menu($name="categorydest", $category=0, $selected=0) {
         $cat = batch_get_category($category);
-        make_categories_list($categories, $parents, 'moodle/category:manage', 0, $cat);
+        $categories = coursecat::make_categories_list('moodle/category:manage', $cat);
         foreach ($categories as $key => $value) {
-            if (array_key_exists($key,$parents)) {
-                if ($indent = count($parents[$key])) {
-                    for ($i = 0; $i < $indent; $i++) {
-                        $categories[$key] = '&nbsp;'.$categories[$key];
-                    }
+            if ($aux = coursecat::get($key)->get_parents()) {
+                if ($indent = count($aux)) {
+                    $categories[$key] = str_repeat('&nbsp;', $indent) . $categories[$key];
                 }
             }
         }
@@ -663,7 +661,7 @@ class local_batch_renderer extends plugin_renderer_base {
         // Start content generation
         $content = html_writer::start_tag('div', array('class'=>'course_category_tree', 'id'=>$id));
         $content .= html_writer::start_tag('ul', array('class' => 'categories'));
-        make_categories_list($categories, $parents, 'moodle/category:manage');
+        $categories = coursecat::make_categories_list('moodle/category:manage');
         foreach ($structure as $category) {
             $content .= $this->make_tree_categories($category, $categories);
         }
