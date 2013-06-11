@@ -76,9 +76,8 @@ ul.params input {
     margin: 0 0 0 1em;
 }
 
-.course_category_tree .category_group {
-    overflow: hidden;
-    padding: 0 0 0 15px;
+.course_category_tree .category_group li.course {
+    padding-left: 1em;
 }
 
 .course_category_tree .category_group span {
