@@ -36,7 +36,11 @@ class batch_type_import_course extends batch_type_base {
         $enrol = new enrol_manual_plugin();
         $enrol->add_instance((object) array('id' => $params->courseid));
         if ($params->coursedisplay) {
-            $DB->set_field('course', 'coursedisplay', 1, array('id' => $params->courseid));
+            $conditions = array(
+                'courseid' => $params->courseid,
+                'name'     => 'coursedisplay',
+            );
+            $DB->set_field('course_format_options', 'value', 1, $conditions);
         }
     }
 

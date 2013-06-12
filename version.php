@@ -1,6 +1,6 @@
 <?php
 
 $plugin->version = 2013061100;
-$plugin->requires = 2012062500; // Moodle 2.3
+$plugin->requires = 2013051400; // Moodle 2.5
 $plugin->cron = 60;
 $plugin->component = 'local_batch';
