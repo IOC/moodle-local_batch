@@ -401,7 +401,24 @@ class batch_course {
         $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename(backup::FORMAT_MOODLE, backup::TYPE_1COURSE, $courseid, false, false));
         $bc->get_plan()->get_setting('users')->set_value(true);
         $bc->get_plan()->get_setting('calendarevents')->set_value(true);
+        $bc->get_plan()->get_setting('grade_histories')->set_value(false);
+        $bc->get_plan()->get_setting('comments')->set_value(false);
+        $bc->get_plan()->get_setting('userscompletion')->set_value(false);
+        $bc->get_plan()->get_setting('logs')->set_value(false);
+
+        if ($allmods = $DB->get_records_menu('modules', null, '', 'id, name')) {
+            if ($modules = $DB->get_records('course_modules', array('course' => $courseid), '', 'id, module')) {
+                foreach ($modules as $mod) {
+                    $name = $allmods[$mod->module] . '_' . $mod->id . '_userinfo';
+                    if ($bc->get_plan()->setting_exists($name)) {
+                        $bc->get_plan()->get_setting($name)->set_value(false);
+                    }
+                }
+            }
+        }
+
         $bc->set_status(backup::STATUS_AWAITING);
+
         //Execute backup
         $bc->execute_plan();
         $results = $bc->get_results();
@@ -498,6 +515,7 @@ class batch_course {
 
         $startdate = make_timestamp($params->startyear, $params->startmonth, $params->startday);
         $rc->get_plan()->get_setting('course_startdate')->set_value($startdate);
+        $rc->get_plan()->get_setting('grade_histories')->set_value(false);
 
         //Execute restore
         $rc->execute_plan();
@@ -510,6 +528,17 @@ class batch_course {
             fulldelete("$CFG->tempdir/backup/$tempdir/");
         }
         return $courseid;
+    }
+
+    public static function remove_grade_history_data($courseid) {
+        global $DB;
+
+        $sql = "DELETE gg.*"
+            . " FROM {grade_grades_history} gg"
+            . " JOIN {grade_items_history} gi ON gi.oldid = gg.itemid"
+            . " WHERE gi.courseid = :courseid";
+
+        $DB->execute($sql, array('courseid' => $courseid));
     }
 
     public static function get_user_assignments_by_course($courseid) {

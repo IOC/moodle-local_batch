@@ -103,6 +103,9 @@ class batch_type_restart_course extends batch_type_base {
         } else {
             $params->category = $course->category;
         }
+
+        //Remove mdl_grade_grades_history
+        batch_course::remove_grade_history_data($params->courseid);
     }
 
     function params_info($params, $jobid) {
