@@ -111,7 +111,8 @@ class local_batch_renderer extends plugin_renderer_base {
         } else {
             $content .= $this->output->heading(get_string('nothingtodisplay'));
         }
-        $url = $this->url('job_queue', array('filter' => $filter));
+        $url = $this->url('job_queue', array('filter' => $filter,
+                                                'category' => $category));
         $pagingbar = new paging_bar($count, $page, LOCAL_BATCH_PERPAGE, $url);
         $content .= $this->output->render($pagingbar);
         return $content;
