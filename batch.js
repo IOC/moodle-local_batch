@@ -99,7 +99,6 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
     Y.on('contentready', function() {
         if (M.form.dateselector.calendar) {
             M.form.dateselector.calendar.selectEvent.subscribe(batch_get_selected_date);
-            M.form.dateselector.calendar.cfg.setProperty('mindate', new Date());
             M.form.dateselector.panel.set('zIndex', 1);
             Y.one('#dateselector-calendar-panel')
                 .setStyle('border', 0)
