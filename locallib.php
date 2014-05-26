@@ -363,22 +363,13 @@ function batch_get_categories($cat, &$tree, $categories, $courses) {
 function batch_get_courses($category) {
     global $DB;
 
-    $sqlwhere = '';
-
-    if ($category) {
-        $sqlwhere = " WHERE category = $category";
-    }
-    $sql = "SELECT id, visible, fullname, shortname, category"
-        . " FROM {course}"
-        . $sqlwhere
-        . " ORDER BY sortorder ASC";
     $categoryids = array();
-    if ($courses = $DB->get_records_sql($sql)) {
+
+    if ($courses = coursecat::get($category)->get_courses(array('recursive' => true))) {
         foreach ($courses as $course) {
             if ($course->id == SITEID) {
                 continue;
             }
-            context_instance_preload($course);
             if (!empty($course->visible) || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                 if (!isset($categoryids[$course->category])) {
                     $categoryids[$course->category] = array();
