@@ -22,7 +22,7 @@ require_once('locallib.php');
 const LOCAL_BATCH_PERPAGE = 10;
 
 function local_batch_extends_settings_navigation($nav, $context) {
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('moodle/site:config', context_system::instance())) {
         $node = navigation_node::create(get_string('pluginname', 'local_batch'),
                         new moodle_url('/local/batch/index.php',
                         array('category' => 0)),
@@ -30,10 +30,11 @@ function local_batch_extends_settings_navigation($nav, $context) {
                         'local_batch',
                         'local_batch',
                         new pix_icon('icon', '', 'local_batch'));
-        $settings = $nav->get('root');
-        $settings->children->add($node);
+        if ($settings = $nav->get('root')) {
+            $settings->children->add($node);
+        }
     }
-    if (has_capability('moodle/category:manage', $context) and $context->contextlevel == CONTEXT_COURSECAT) {
+    if ($context and has_capability('moodle/category:manage', $context) and $context->contextlevel == CONTEXT_COURSECAT) {
         $node = navigation_node::create(get_string('pluginname', 'local_batch'),
                         new moodle_url('/local/batch/index.php',
                         array('category' => $context->instanceid)),
