@@ -390,7 +390,7 @@ class local_batch_renderer extends plugin_renderer_base {
                                     'value' => $role->id
                                     )
                         );
-            $content .= html_writer::label($role->name, 'role['.$role->id.']');
+            $content .= html_writer::label($role->localname, 'role['.$role->id.']');
             $content .= html_writer::end_tag('li');
         }
         $content .= html_writer::end_tag('ul');
