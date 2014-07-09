@@ -84,11 +84,11 @@ ul.params input {
     padding-left: 1em;
     background-repeat: no-repeat;
     background-position: 0 3px;
-    background-image: url('../../pix/t/switch_minus.gif');
+    background-image: url('../../pix/t/switch_minus.png');
 }
 
 .course_category_tree .category_group.batch_hidden span {
-    background-image: url('../../pix/t/switch_plus.gif');
+    background-image: url('../../pix/t/switch_plus.png');
 }
 
 .course_category_tree li label,
