@@ -316,8 +316,7 @@ function batch_get_course_category_tree($tree, $category, &$result) {
 function batch_get_user($userid) {
     global $DB;
     $conditions = array('id' => $userid);
-    $fields = 'id, username, firstname, lastname';
-    return $DB->get_record('user', $conditions, $fields, MUST_EXIST);
+    return $DB->get_record('user', $conditions, '*', MUST_EXIST);
 }
 
 function batch_get_category_and_subcategories_info($category) {
