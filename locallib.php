@@ -322,6 +322,7 @@ function batch_get_user($userid) {
 function batch_get_category_and_subcategories_info($category) {
     global $DB;
 
+    cache_helper::purge_by_definition('core', 'coursecat');
     $records = $DB->get_records_sql("SELECT id , name, path"
                         . " FROM mdl_course_categories"
                         . " ORDER BY sortorder"
