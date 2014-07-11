@@ -25,7 +25,7 @@ require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 define('BATCH_CRON_TIME', 600);
-define('BATCH_TODELETE_AGE', 90 * 86400);
+define('BATCH_TODELETE_AGE', 365 * 86400);
 
 class batch_job {
     var $id;
