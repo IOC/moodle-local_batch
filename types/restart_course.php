@@ -1,27 +1,31 @@
 <?php
-
-// Local batch plugin for Moodle
-// Copyright © 2012,2013 Institut Obert de Catalunya
+// This file is part of Moodle - http://moodle.org/
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Ths program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    local
+ * @subpackage batch
+ * @copyright  2014 Institut Obert de Catalunya
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('base.php');
 
 class batch_type_restart_course extends batch_type_base {
 
-    function execute($jobid, $categoryid, $params) {
+    public function execute($jobid, $categoryid, $params) {
         global $DB;
 
         if (!$course = $DB->get_record('course', array('shortname' => $params->shortname))) {
@@ -32,21 +36,21 @@ class batch_type_restart_course extends batch_type_base {
             throw new Exception('started recently');
         }
 
-        $old_shortname = $course->shortname . '~';
-        $old_fullname = $course->fullname . strftime(' ~ %B %G');
+        $oldshortname = $course->shortname . '~';
+        $oldfullname = $course->fullname . strftime(' ~ %B %G');
 
-        if ($old_course = $DB->get_record('course', array('shortname' => $old_shortname))) {
+        if ($oldcourse = $DB->get_record('course', array('shortname' => $oldshortname))) {
             throw new Exception("backup exists");
         }
 
         $file = batch_course::backup_course($course->id);
 
         batch_course::hide_course($course->id);
-        batch_course::rename_course($course->id, $old_shortname, $old_fullname);
+        batch_course::rename_course($course->id, $oldshortname, $oldfullname);
         $params->fullname = $course->fullname;
-        $context = context_course::instance($course->id);//old course
+        $context = context_course::instance($course->id);// old course
         $params->courseid = batch_course::restore_backup($file, $context, $params, $course->category);
-        $context = context_course::instance($params->courseid);//new course
+        $context = context_course::instance($params->courseid);// new course
 
         if (!empty($params->roleassignments)) {
             $participants = batch_course::get_user_assignments_by_course($params->courseid);
@@ -75,16 +79,16 @@ class batch_type_restart_course extends batch_type_base {
             }
         }
         if (isset($params->groups) and $params->groups) {
-            //Groups from source
+            // Groups from source
             $groups = groups_get_all_groups($course->id);
-            //Participants from destination
+            // Participants from destination
             if (!isset($participants) or empty($participants)) {
                 $participants = batch_course::get_user_assignments_by_course($params->courseid);
             }
-            $destination_groups = $DB->get_records_menu('groups', array('courseid' => $params->courseid), '', 'id, name');
+            $destinationgroups = $DB->get_records_menu('groups', array('courseid' => $params->courseid), '', 'id, name');
             foreach ($groups as $group) {
-                if ($groupid = array_search($group->name, $destination_groups)) {
-                    //Members group from source
+                if ($groupid = array_search($group->name, $destinationgroups)) {
+                    // Members group from source
                     $members = groups_get_members($group->id);
                     foreach ($members as $member) {
                         if (array_key_exists($member->id, $participants)) {
@@ -104,19 +108,19 @@ class batch_type_restart_course extends batch_type_base {
             $params->category = $course->category;
         }
 
-        //Remove mdl_grade_grades_history
+        // Remove mdl_grade_grades_history
         batch_course::remove_grade_history_data($params->courseid);
     }
 
-    function params_info($params, $jobid) {
+    public function params_info($params, $jobid) {
         global $PAGE;
         $user = batch_get_user($params->user);
         $batchoutput = $PAGE->get_renderer('local_batch');
 
         return $batchoutput->print_info_restart_courses(
             array(
-                'courseid'   => (isset($params->courseid)?$params->courseid:''),
-                'fullname'   => (isset($params->fullname)?$params->fullname:''),
+                'courseid'   => (isset($params->courseid) ? $params->courseid : ''),
+                'fullname'   => (isset($params->fullname) ? $params->fullname : ''),
                 'shortname'  => $params->shortname,
                 'startday'   => $params->startday,
                 'startmonth' => $params->startmonth,

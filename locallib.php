@@ -1,21 +1,25 @@
 <?php
-
-// Local batch plugin for Moodle
-// Copyright © 2012,2013 Institut Obert de Catalunya
+// This file is part of Moodle - http://moodle.org/
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Ths program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    local
+ * @subpackage batch
+ * @copyright  2014 Institut Obert de Catalunya
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
@@ -28,17 +32,17 @@ define('BATCH_CRON_TIME', 600);
 define('BATCH_TODELETE_AGE', 365 * 86400);
 
 class batch_job {
-    var $id;
-    var $user;
-    var $category;
-    var $type;
-    var $params;
-    var $timecreated;
-    var $timestarted;
-    var $timeended;
-    var $error;
+    public $id;
+    public $user;
+    public $category;
+    public $type;
+    public $params;
+    public $timecreated;
+    public $timestarted;
+    public $timeended;
+    public $error;
 
-    function __construct($record) {
+    public function __construct($record) {
         $this->id = $record->id;
         $this->user = $record->user;
         $this->category = $record->category;
@@ -52,12 +56,12 @@ class batch_job {
         $this->error = $record->error;
     }
 
-    function can_start() {
+    public function can_start() {
         $type = batch_type($this->type);
         return $type->can_start($this->params);
     }
 
-    function execute() {
+    public function execute() {
         global $DB;
 
         $type = batch_type($this->type);
@@ -70,7 +74,7 @@ class batch_job {
         $this->save();
     }
 
-    function record() {
+    public function record() {
         return (object) array('id' => $this->id,
                               'user' => $this->user,
                               'category' => $this->category,
@@ -82,12 +86,12 @@ class batch_job {
                               'error' => $this->error);
     }
 
-    function save() {
+    public function save() {
         global $DB;
         $DB->update_record('local_batch_jobs', $this->record());
     }
 
-    function delete() {
+    public function delete() {
         global $DB;
         $context = context_coursecat::instance($this->category);
         $DB->delete_records('local_batch_jobs', array('id' => $this->id));
@@ -146,19 +150,19 @@ class batch_queue {
         if ($filter == self::FILTER_PENDING) {
             $select .= " AND timeended = :timeended";
             $params['timeended'] = 0;
-        } elseif ($filter == self::FILTER_FINISHED) {
+        } else if ($filter == self::FILTER_FINISHED) {
             $select .= " AND timeended > :timeended AND error = :error";
             $params['timeended'] = 0;
             $params['error'] = '';
-        } elseif ($filter == self::FILTER_ERRORS) {
+        } else if ($filter == self::FILTER_ERRORS) {
             $select .= " AND timeended > :timeended AND error != :error";
             $params['timeended'] = 0;
             $params['error'] = '';
-        } elseif ($filter == self::FILTER_ABORTED) {
+        } else if ($filter == self::FILTER_ABORTED) {
             $select .= " AND timestarted > :timestarted AND timeended = :timeended";
             $params['timestarted'] = 0;
             $params['timeended'] = 0;
-        } elseif ($filter == self::FILTER_TODELETE) {
+        } else if ($filter == self::FILTER_TODELETE) {
             $select = "timecreated <= :timetodelete";
             $params['timetodelete'] = $time_todelete;
         }
@@ -304,7 +308,7 @@ function batch_get_course_category($course) {
 function batch_get_course_category_tree($tree, $category, &$result) {
     if ($tree->id == $category) {
         $result = $tree;
-    } elseif (!empty($tree->categories)){
+    } else if (!empty($tree->categories)) {
         foreach ($tree->categories as $branch) {
             if (empty($result)) {
                 batch_get_course_category_tree($branch, $category, $result);
@@ -346,14 +350,16 @@ function batch_get_category_and_subcategories_info($category) {
 }
 
 function batch_get_categories($cat, &$tree, $categories, $courses) {
-    if (empty($cat)) return 0;
+    if (empty($cat)) {
+        return 0;
+    }
     $index = $cat[0];
     if (!array_key_exists($index, $tree)) {
         $obj = new stdClass();
         $obj->id = $index;
         $obj->name = $categories[$index]->name;
         $obj->categories = array();
-        $obj->courses = (isset($courses[$index])?$courses[$index]:array());
+        $obj->courses = (isset($courses[$index]) ? $courses[$index] : array());
         $tree[$index] = $obj;
     }
     array_shift($cat);
@@ -388,7 +394,7 @@ class batch_course {
 
         $bc = new backup_controller(backup::TYPE_1COURSE, $courseid, backup::FORMAT_MOODLE,
                         backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
-        //Set own properties
+        // Set own properties.
         $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename(backup::FORMAT_MOODLE, backup::TYPE_1COURSE, $courseid, false, false));
         $bc->get_plan()->get_setting('users')->set_value(true);
         $bc->get_plan()->get_setting('calendarevents')->set_value(true);
@@ -410,7 +416,7 @@ class batch_course {
 
         $bc->set_status(backup::STATUS_AWAITING);
 
-        //Execute backup
+        // Execute backup.
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination']; // may be empty if file already moved to target location
@@ -496,7 +502,7 @@ class batch_course {
         }
         $rc->execute_precheck();
 
-        //Set own properties
+        // Set own properties.
         if (!empty($params->shortname)) {
             $rc->get_plan()->get_setting('course_shortname')->set_value($params->shortname);
         }
@@ -508,10 +514,10 @@ class batch_course {
         $rc->get_plan()->get_setting('course_startdate')->set_value($startdate);
         $rc->get_plan()->get_setting('grade_histories')->set_value(false);
 
-        //Execute restore
+        // Execute restore.
         $rc->execute_plan();
 
-        //Remove temp backup
+        // Remove temp backup.
         if ($files) {
             if (!$import and !$file->is_external_file()) {
                 fulldelete($pathname);
@@ -560,9 +566,9 @@ class batch_course {
              'itemid' => 0,
              'mnethostid' => $CFG->mnet_localhost_id,
          ));
-     }
+    }
 
-     public static function assignmentupgrade($courseid) {
+    public static function assignmentupgrade($courseid) {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
         require_once($CFG->dirroot . '/admin/tool/assignmentupgrade/locallib.php');
@@ -572,7 +578,7 @@ class batch_course {
             . ' WHERE name = :version'
             . ' AND plugin LIKE :assignment';
         $types = $DB->get_records_sql($sql, array(
-            'version' => 'version', 
+            'version' => 'version',
             'assignment' => 'assignment_%'
         ));
 
@@ -595,7 +601,7 @@ class batch_course {
         foreach ($records as $record) {
             tool_assignmentupgrade_upgrade_assignment($record->id);
         }
-     }
+    }
 
     public static function change_prefix($courseid, $prefix) {
         global $DB;
@@ -629,7 +635,7 @@ class batch_course {
         if ($suffix == 'restarted') {
             $course->shortname .= '~';
             $course->fullname .= strftime(' ~ %B %G');
-        } elseif ($suffix == 'imported') {
+        } else if ($suffix == 'imported') {
             $course->shortname .= '*';
         }
 

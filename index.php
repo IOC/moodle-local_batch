@@ -1,32 +1,36 @@
 <?php
-
-// Local batch plugin for Moodle
-// Copyright © 2012,2013 Institut Obert de Catalunya
+// This file is part of Moodle - http://moodle.org/
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Ths program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    local
+ * @subpackage batch
+ * @copyright  2014 Institut Obert de Catalunya
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('../../config.php');
 require_once('lib.php');
 
 require_login();
 
-$cancel_job = optional_param('cancel_job', 0, PARAM_INT);
+$canceljob = optional_param('cancel_job', 0, PARAM_INT);
 $category   = optional_param('category', 0, PARAM_INT);
 $filter     = optional_param('filter', batch_queue::FILTER_ALL, PARAM_INT);
 $page       = optional_param('page', 0, PARAM_INT);
-$retry_job  = optional_param('retry_job', 0, PARAM_INT);
+$retryjob  = optional_param('retry_job', 0, PARAM_INT);
 $view       = optional_param('view', 'job_queue', PARAM_ALPHAEXT);
 
 $context = context_system::instance();
@@ -37,7 +41,7 @@ if ($category) {
         print_error('unknowcategory');
     }
     $context = context_coursecat::instance($category);
-} elseif (has_capability('moodle/category:manage', $context)) {
+} else if (has_capability('moodle/category:manage', $context)) {
     $category = 0;
     $PAGE->set_url('/local/batch/index.php', array('category' => $category));
 }
@@ -55,9 +59,9 @@ $batchoutput = $PAGE->get_renderer('local_batch');
 
 if ($view == 'job_queue') {
 
-    if ($cancel_job) {
+    if ($canceljob) {
         require_sesskey();
-        batch_queue::cancel_job($cancel_job, $context);
+        batch_queue::cancel_job($canceljob, $context);
         $params = array(
             'view' => 'job_queue',
             'filter' => $filter,
@@ -67,9 +71,9 @@ if ($view == 'job_queue') {
         redirect(new moodle_url('/local/batch/index.php', $params));
     }
 
-    if ($retry_job) {
+    if ($retryjob) {
         require_sesskey();
-        batch_queue::retry_job($retry_job);
+        batch_queue::retry_job($retryjob);
         $params = array(
             'view' => 'job_queue',
             'filter' => $filter,
@@ -84,7 +88,7 @@ if ($view == 'job_queue') {
     echo $OUTPUT->header();
     echo $batchoutput->print_header($view, $category);
     echo $batchoutput->print_job_queue($jobs, $count, $page, $filter, $category);
-} elseif ($view == 'create_courses') {
+} else if ($view == 'create_courses') {
     list($csvfile, $data) = batch_create_courses_get_data();
     if (!$csvfile and $data) {
         $draftareaid = file_get_submitted_draft_itemid('choose-backup');
@@ -98,7 +102,7 @@ if ($view == 'job_queue') {
             file_save_draft_area_files($draftareaid, $context->id, 'local_batch', 'job', $job->id);
         }
         redirect(new moodle_url('/local/batch/index.php', array('category' => $category)));
-    } elseif (!$csvfile) {
+    } else if (!$csvfile) {
         $data = array();
         $date = getdate();
         $data['lastindex']  = 0;
@@ -111,21 +115,21 @@ if ($view == 'job_queue') {
             'fullname'  => '',
             'category'  => 0
         );
-    } elseif($csvfile) {
+    } else if ($csvfile) {
         $data['draftareaid'] = file_get_submitted_draft_itemid('choose-backup');
     }
     $data['category'] = $category;
     echo $OUTPUT->header();
     echo $batchoutput->print_header($view, $category);
     echo $batchoutput->print_create_courses($data);
-} elseif ($view == 'delete_courses') {
+} else if ($view == 'delete_courses') {
     if ($data = batch_data_submitted()) {
         foreach ($data as $name => $value) {
             if (preg_match("/^course-/", $name)) {
                 preg_match('/[^\d]*(\d+)$/', $name, $id);
                 $params = array(
                     'shortname' => stripslashes($value),
-                    'courseid'  => isset($id[1])?$id[1]:0
+                    'courseid'  => isset($id[1]) ? $id[1] : 0
                 );
                 $catid = batch_get_course_category($params['courseid']);
                 batch_queue::add_job($USER->id, $catid, 'delete_course', (object) $params);
@@ -137,7 +141,7 @@ if ($view == 'job_queue') {
     echo $batchoutput->print_header($view, $category);
     $courses = batch_get_category_and_subcategories_info($category);
     echo $batchoutput->print_delete_courses($courses, $category);
-} elseif ($view == 'restart_courses') {
+} else if ($view == 'restart_courses') {
     if ($data = batch_data_submitted()) {
         if (preg_match("/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{4})/", $data['startdate'], $match)) {
             $startday = (int) $match[1];
@@ -171,7 +175,7 @@ if ($view == 'job_queue') {
                         'groups'          => $groups,
                     );
                     preg_match('/[^\d]*(\d+)$/', $name, $id);
-                    $courseid = isset($id[1])?$id[1]:0;
+                    $courseid = isset($id[1]) ? $id[1] : 0;
                     $catid = batch_get_course_category($courseid);
                     batch_queue::add_job($USER->id, $catid, 'restart_course', (object) $params);
                 }
@@ -189,7 +193,7 @@ if ($view == 'job_queue') {
     $data['startday']   = $date['mday'];
     $data['category']   = $category;
     echo $batchoutput->print_restart_courses($courses, $data);
-} elseif ($view == 'import_courses') {
+} else if ($view == 'import_courses') {
     if ($data = batch_data_submitted()) {
         if (!empty($data['categorydest'])) {
             if (preg_match("/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{4})/", $data['startdate'], $match)) {
@@ -232,7 +236,7 @@ if ($view == 'job_queue') {
     $data['startmonth']  = $date['mon'];
     $data['startday']    = $date['mday'];
     echo $batchoutput->print_import_courses($data);
-} elseif ($view == 'config_courses') {
+} else if ($view == 'config_courses') {
     if ($data = batch_data_submitted()) {
         $errors = array();
         $courses = false;
@@ -242,7 +246,7 @@ if ($view == 'job_queue') {
                 $data['prefix'] = preg_replace('/[\[\]]*/', '', $data['prefix']);
                 if (!empty($data['remove_prefix'])) {
                     batch_course::change_prefix($courseid, false);
-                } elseif (trim($data['prefix'])) {
+                } else if (trim($data['prefix'])) {
                     batch_course::change_prefix($courseid, $data['prefix']);
                 }
                 if ($data['suffix']) {
@@ -252,7 +256,7 @@ if ($view == 'job_queue') {
                 }
                 if ($data['visible'] == 'yes') {
                     batch_course::show_course($courseid);
-                } elseif ($data['visible'] == 'no') {
+                } else if ($data['visible'] == 'no') {
                     batch_course::hide_course($courseid);
                 }
                 $courses = true;
@@ -260,13 +264,13 @@ if ($view == 'job_queue') {
         }
         $url = new moodle_url('/local/batch/index.php', array('category' => $category, 'view' => 'config_courses'));
         if ($errors) {
-            $message = html_writer::tag('p',get_string('config_courses_error', 'local_batch'));
+            $message = html_writer::tag('p', get_string('config_courses_error', 'local_batch'));
             $message .= html_writer::start_tag('ul');
             foreach ($errors as $courseid) {
                 $message .= html_writer::tag('li', $DB->get_field('course', 'fullname', array('id' => $courseid)));
             }
             $message .= html_writer::end_tag('ul');
-        } elseif ($courses) {
+        } else if ($courses) {
             $message = get_string('config_courses_ok', 'local_batch');
         } else {
             redirect($url);

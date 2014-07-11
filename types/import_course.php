@@ -1,28 +1,32 @@
 <?php
-
-// Local batch plugin for Moodle
-// Copyright © 2012,2013 Institut Obert de Catalunya
+// This file is part of Moodle - http://moodle.org/
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Ths program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    local
+ * @subpackage batch
+ * @copyright  2014 Institut Obert de Catalunya
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('base.php');
-require_once $CFG->dirroot . '/enrol/manual/lib.php';
+require_once($CFG->dirroot . '/enrol/manual/lib.php');
 
 class batch_type_import_course extends batch_type_base {
 
-    function execute($jobid, $categoryid, $params) {
+    public function execute($jobid, $categoryid, $params) {
         global $DB, $CFG;
 
         $context = context_coursecat::instance($categoryid);
@@ -44,7 +48,7 @@ class batch_type_import_course extends batch_type_base {
         }
     }
 
-    function params_info($params, $jobid) {
+    public function params_info($params, $jobid) {
         global $DB, $PAGE;
 
         $context = context_coursecat::instance($params->category);
@@ -55,11 +59,11 @@ class batch_type_import_course extends batch_type_base {
 
         return $batchoutput->print_info_import_courses(
             array(
-                'courseid'      => (isset($params->courseid)?$params->courseid:''),
+                'courseid'      => (isset($params->courseid) ? $params->courseid : ''),
                 'categoryname'  => $categoryname,
                 'coursedisplay' => $params->coursedisplay,
                 'filename'      => basename($params->file),
-                'fullname'      => (isset($params->fullname)?$params->fullname:''),
+                'fullname'      => (isset($params->fullname) ? $params->fullname : ''),
                 'startday'      => $params->startday,
                 'startmonth'    => $params->startmonth,
                 'startyear'     => $params->startyear,
