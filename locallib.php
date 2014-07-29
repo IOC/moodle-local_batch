@@ -530,12 +530,15 @@ class batch_course {
     public static function remove_grade_history_data($courseid) {
         global $DB;
 
-        $sql = "DELETE gg.*"
-            . " FROM {grade_grades_history} gg"
-            . " JOIN {grade_items_history} gi ON gi.oldid = gg.itemid"
-            . " WHERE gi.courseid = :courseid";
-
-        $DB->execute($sql, array('courseid' => $courseid));
+        $DB->execute('DELETE gg.* ' .
+                     'FROM {grade_grades_history} gg ' .
+                     'JOIN {grade_items_history} gi ON gi.oldid = gg.itemid ' .
+                     'WHERE gi.courseid = :courseid',
+                     array('courseid' => $courseid));
+        $DB->delete_records('grade_items_history', array('courseid' => $courseid));
+        $DB->delete_records('grade_categories_history', array('courseid' => $courseid));
+        $DB->delete_records('grade_outcomes_history', array('courseid' => $courseid));
+        $DB->delete_records('scale_history', array('courseid' => $courseid));
     }
 
     public static function get_user_assignments_by_course($courseid) {
