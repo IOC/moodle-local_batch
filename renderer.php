@@ -410,6 +410,15 @@ class local_batch_renderer extends plugin_renderer_base {
         );
         $content .= html_writer::empty_tag('input', $params);
         $content .= $this->output->container_end();// close groups
+        $content .= $this->output->container_start('materials');
+        $content .= html_writer::label(get_string('materials', 'local_batch'), 'materials');
+        $params = array(
+            'id' => 'materials',
+            'type' => 'checkbox',
+            'name' => 'materials',
+        );
+        $content .= html_writer::empty_tag('input', $params);
+        $content .= $this->output->container_end();// close materials configuration
         $content .= $this->output->container_end();// close section
 
         $params = array(

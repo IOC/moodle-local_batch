@@ -647,4 +647,24 @@ class batch_course {
             return $DB->update_record('course', $course);
         }
     }
+
+    public static function copy_config_materials($oldcourseid, $newcourseid) {
+        global $DB;
+
+        if ($record = $DB->get_record('local_materials', array('courseid' => $oldcourseid))) {
+            $materialid = $record->id;
+            unset($record->id);
+            $record->courseid = $newcourseid;
+            $newid = $DB->insert_record('local_materials', $record);
+            $context = context_system::instance();
+            $fs = get_file_storage();
+            $oldfiles = $fs->get_area_files($context->id, 'local_materials', 'attachment', $materialid, 'id', false);
+            foreach ($oldfiles as $oldfile) {
+                $filerecord = new stdClass();
+                $filerecord->contextid = $context->id;
+                $filerecord->itemid = $newid;
+                $fs->create_file_from_storedfile($filerecord, $oldfile);
+            }
+        }
+    }
 }

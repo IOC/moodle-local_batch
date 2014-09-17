@@ -108,6 +108,11 @@ class batch_type_restart_course extends batch_type_base {
             $params->category = $course->category;
         }
 
+        if (isset($params->materials) and $params->materials) {
+            // Copy configutarion from local_materials
+            batch_course::copy_config_materials($course->id, $params->courseid);
+        }
+
         // Remove mdl_grade_grades_history
         batch_course::remove_grade_history_data($course->id);
     }

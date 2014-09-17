@@ -24,6 +24,7 @@ $string['filter_errors'] = 'Errors';
 $string['filter_finished'] = 'Ended';
 $string['filter_pending'] = 'Pending';
 $string['import_from_csv_file'] = 'Import from csv file';
+$string['materials'] = 'Import ftp protected files';
 $string['nobackupfolder'] = 'No backup folder configured';
 $string['parameters'] = 'Parameters';
 $string['pluginname'] = 'Batch jobs';

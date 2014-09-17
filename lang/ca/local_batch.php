@@ -24,6 +24,7 @@ $string['filter_errors'] = 'Errors';
 $string['filter_finished'] = 'Finalitzades';
 $string['filter_pending'] = 'Pendents';
 $string['import_from_csv_file'] = 'Importa des d\'un fitxer CSV';
+$string['materials'] = 'Importa els materials ftp protegits';
 $string['nobackupfolder'] = 'No hi ha cap carpeta de backups configurada';
 $string['parameters'] = 'Paràmetres';
 $string['pluginname'] = 'Tasques per lots';

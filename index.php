@@ -161,6 +161,7 @@ if ($view == 'job_queue') {
             $roleassignments = '';
         }
         $groups = !empty($data['groups']);
+        $materials = !empty($data['materials']);
 
         if ($match and checkdate($startmonth, $startday, $startyear)) {
             foreach ($data as $name => $value) {
@@ -173,6 +174,7 @@ if ($view == 'job_queue') {
                         'category'        => $categorydest,
                         'roleassignments' => $roleassignments,
                         'groups'          => $groups,
+                        'materials'       => $materials,
                     );
                     preg_match('/[^\d]*(\d+)$/', $name, $id);
                     $courseid = isset($id[1]) ? $id[1] : 0;
