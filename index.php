@@ -41,9 +41,13 @@ if ($category) {
         print_error('unknowcategory');
     }
     $context = context_coursecat::instance($category);
+    $categoryname = coursecat::get($category)->get_formatted_name();
+    $PAGE->navbar->add(get_string('pluginname', 'local_batch'), new moodle_url('/local/batch/index.php', array('category' => $category)));
+    $PAGE->navbar->add($categoryname);
 } else if (has_capability('moodle/category:manage', $context)) {
     $category = 0;
     $PAGE->set_url('/local/batch/index.php', array('category' => $category));
+    $PAGE->navbar->add(get_string('pluginname', 'local_batch'), '/local/batch/index.php');
 }
 
 require_capability('moodle/category:manage', $context);
@@ -56,6 +60,11 @@ $PAGE->requires->css('/local/batch/styles.css');
 $PAGE->requires->js('/local/batch/batch.js');
 form_init_date_js();
 $batchoutput = $PAGE->get_renderer('local_batch');
+$params = array(
+    'category' => $category,
+    'view' => $view,
+);
+$PAGE->navbar->add(get_string('view_' . $view, 'local_batch'), new moodle_url('/local/batch/index.php', $params));
 
 if ($view == 'job_queue') {
 
