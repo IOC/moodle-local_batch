@@ -43,13 +43,19 @@ class batch_type_restart_course extends batch_type_base {
             throw new Exception("backup exists");
         }
 
-        $file = batch_course::backup_course($course->id);
+        list($file, $backupid) = batch_course::backup_course($course->id);
 
         batch_course::hide_course($course->id);
         batch_course::rename_course($course->id, $oldshortname, $oldfullname);
         $params->fullname = $course->fullname;
         $context = context_course::instance($course->id);// old course
-        $params->courseid = batch_course::restore_backup($file, $context, $params, $course->category);
+        $options = array(
+            'category' => $course->category,
+            'mode' => backup::MODE_SAMESITE,
+            'restart' => true,
+            'backupid' => $backupid,
+        );
+        $params->courseid = batch_course::restore_backup($file, $context, $params, $options);
         $context = context_course::instance($params->courseid);// new course
 
         if (!empty($params->roleassignments)) {

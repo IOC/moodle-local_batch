@@ -389,11 +389,11 @@ function batch_get_courses($category) {
 
 class batch_course {
 
-    public static function backup_course($courseid) {
+    public static function backup_course($courseid, $mode = backup::MODE_SAMESITE) {
         global $DB, $USER;
 
         $bc = new backup_controller(backup::TYPE_1COURSE, $courseid, backup::FORMAT_MOODLE,
-                        backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
+                        backup::INTERACTIVE_NO, $mode, $USER->id);
         // Set own properties.
         $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename(backup::FORMAT_MOODLE, backup::TYPE_1COURSE, $courseid, false, false));
         $bc->get_plan()->get_setting('users')->set_value(true);
@@ -416,11 +416,18 @@ class batch_course {
 
         $bc->set_status(backup::STATUS_AWAITING);
 
+        $backupid = $bc->get_backupid();
+        $backupbasepath = $bc->get_plan()->get_basepath();
+
         // Execute backup.
         $bc->execute_plan();
+
         $results = $bc->get_results();
         $file = $results['backup_destination']; // may be empty if file already moved to target location
-        return $file;
+
+        $bc->destroy();
+
+        return array($file, $backupid);
     }
 
     public static function delete_course($courseid) {
@@ -463,11 +470,17 @@ class batch_course {
         }
     }
 
-    public static function restore_backup($file, $context, $params, $category = null, $import = false) {
+    public static function restore_backup($file, $context, $params, $options = array()) {
         global $CFG, $DB, $USER;
 
-        if ($category) {
-            $catid = $category;
+        $import = isset($options['import']);
+        $mode = isset($options['mode']) ? $options['mode'] : backup::MODE_GENERAL;
+        $restart = isset($options['restart']);
+        $backupid = isset($options['backupid']) ? $options['backupid'] : false;
+        $fileisunzip = false;
+
+        if (isset($options['category'])) {
+            $catid = $options['category'];
         } else {
             $catid = $params->category;
         }
@@ -477,22 +490,31 @@ class batch_course {
                                                             get_string('restoringcourseshortname', 'backup'));
         }
         $courseid = restore_dbops::create_new_course($params->fullname, $params->shortname, $catid);
-        if ($import) {
-            $pathname = $file;
-        } else {
-            if ($file->is_external_file()) {
-                $reference = preg_replace('/^\//', '' , $file->get_reference());
-                $repository = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
-                $pathname = $repository->root_path . $reference;
-            } else {
-                $pathname = "$CFG->tempdir/backup/" . basename($file->copy_content_to_temp('/backup'));
-            }
+
+        if ($backupid) {
+            $fileisunzip = file_exists("$CFG->tempdir/backup/$backupid/moodle_backup.xml");
         }
-        $tempdir = restore_controller::get_tempdir_name($context->id, $USER->id);
-        $fb = get_file_packer();
-        $files = $fb->extract_to_pathname($pathname, "$CFG->tempdir/backup/$tempdir/");
-        $rc = new restore_controller($tempdir, $courseid, backup::INTERACTIVE_NO,
-                        backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
+
+        if ($restart and $fileisunzip) {
+            $pathname = $CFG->tempdir . '/backup/' . $backupid;
+        } else {
+            if ($import) {
+                $pathname = $file;
+            } else {
+                if ($file->is_external_file()) {
+                    $reference = preg_replace('/^\//', '' , $file->get_reference());
+                    $repository = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
+                    $pathname = $repository->root_path . $reference;
+                } else {
+                    $pathname = "$CFG->tempdir/backup/" . basename($file->copy_content_to_temp('/backup'));
+                }
+            }
+            $backupid = restore_controller::get_tempdir_name($context->id, $USER->id);
+            $fb = get_file_packer();
+            $files = $fb->extract_to_pathname($pathname, "$CFG->tempdir/backup/$backupid/");
+        }
+        $rc = new restore_controller($backupid, $courseid, backup::INTERACTIVE_NO,
+                        $mode, $USER->id, backup::TARGET_NEW_COURSE);
         if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
             $rc->convert();
             if ($import) {
@@ -517,12 +539,14 @@ class batch_course {
         // Execute restore.
         $rc->execute_plan();
 
+        $rc->destroy();
+
         // Remove temp backup.
         if ($files) {
-            if (!$import and !$file->is_external_file()) {
+            if (!$fileisunzip and !$import and !$file->is_external_file()) {
                 fulldelete($pathname);
             }
-            fulldelete("$CFG->tempdir/backup/$tempdir/");
+            fulldelete("$CFG->tempdir/backup/$backupid/");
         }
         return $courseid;
     }
