@@ -521,6 +521,9 @@ class batch_course {
                 $params->fullname = $rc->get_info()->original_course_fullname;
                 $params->shortname = $rc->get_info()->original_course_shortname . '*';
             }
+        } else if ($import) {
+            $params->fullname = $rc->get_info()->original_course_fullname;
+            $params->shortname = $rc->get_info()->original_course_shortname;
         }
         $rc->execute_precheck();
 
