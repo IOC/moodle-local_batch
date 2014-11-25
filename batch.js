@@ -59,16 +59,32 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
         }
     };
 
-    var batch_position_datepicker = function() {
+    var batch_toggle_datepicker = function() {
+        batch_position_datepicker();
         var node = Y.one('#dateselector-calendar-panel');
-        Y.one('#calendar-panel').append(node);
-        M.form.dateselector.panel.show();
+        if (M.form.dateselector.showing) {
+            M.form.dateselector.panel.hide();
+            M.form.dateselector.showing = false;
+        } else {
+            M.form.dateselector.panel.show();
+            M.form.dateselector.showing = true;
+        }
+    };
+
+    var batch_position_datepicker = function() {
+        var datepicker = Y.one('#dateselector-calendar-panel');
+        var startdate = Y.one('#startdate');
+        var position = startdate.getXY();
+        position[1] -= datepicker.get('offsetHeight');
+        datepicker.setXY(position);
     };
 
     var batch_get_selected_date = function(eventtype, args) {
         var date = args[0][0];
         var node = Y.one('input[name="startdate"]');
         node.set('value', date[2] + '/' + date[1] + '/' + date[0]);
+        M.form.dateselector.showing = false;
+        M.form.dateselector.panel.hide();
     };
 
     Y.on('change', function(e) {
@@ -96,18 +112,28 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
         }
     }, '#remove_prefix');
 
+    Y.on('click', function(e) {
+        M.form.dateselector.showing = false;
+        M.form.dateselector.panel.hide();
+    }, '#page');
+
+    Y.on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        batch_toggle_datepicker();
+    }, '#batch_toggle_datepicker');
+
     Y.on('contentready', function() {
         if (M.form.dateselector.calendar) {
             M.form.dateselector.calendar.selectEvent.subscribe(batch_get_selected_date);
             M.form.dateselector.panel.set('zIndex', 1);
             Y.one('#dateselector-calendar-panel')
                 .setStyle('border', 0)
-                .setStyle('position', 'relative')
+                //.setStyle('position', 'relative')
                 .setStyle('margin', '8px 0 0 3px')
                 .setStyle('background-color', 'transparent')
                 .setStyle('min-height', '210px');
             M.form.dateselector.calendar.render();
-            batch_position_datepicker();
         }
     }, '#dateselector-calendar-panel');
 

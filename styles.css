@@ -124,3 +124,7 @@ ul.params input {
 .batch_delimiter {
     margin: 0 0.5em;
 }
+
+.batch_toggle_datepicker {
+    margin-left: 5px;
+}

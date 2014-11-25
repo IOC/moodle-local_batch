@@ -228,11 +228,15 @@ class local_batch_renderer extends plugin_renderer_base {
         $content .= $this->output->container_start('section', 'calendar-panel');
         $content .= $this->output->heading(get_string('start_date', 'local_batch'), 3);
         $params = array(
+            'id' => 'startdate',
             'type' => 'text',
             'name' => 'startdate',
             'value' => $info['startday'] . '/' . $info['startmonth'] . '/' . $info['startyear']
         );
         $content .= html_writer::empty_tag('input', $params);
+        $url = $this->output->pix_url('i/calendar', 'core');
+        $datepicker = html_writer::empty_tag('img', array('id' => 'batch_toggle_datepicker', 'class' => 'batch_toggle_datepicker', 'src' => $url, 'alt' => 'calendar'));
+        $content .= html_writer::link('#', $datepicker);
         $content .= $this->output->container_end('section');
         $params = array(
             'type' => 'submit',
@@ -376,6 +380,9 @@ class local_batch_renderer extends plugin_renderer_base {
             'value' => $info['startday'] . '/' . $info['startmonth'] . '/' . $info['startyear']
         );
         $content .= html_writer::empty_tag('input', $params);
+        $url = $this->output->pix_url('i/calendar', 'core');
+        $datepicker = html_writer::empty_tag('img', array('id' => 'batch_toggle_datepicker', 'class' => 'batch_toggle_datepicker', 'src' => $url, 'alt' => 'calendar'));
+        $content .= html_writer::link('#', $datepicker);
         $content .= $this->output->container_end();// close startdate
         $content .= $this->output->container_start('batch_category', 'category');
         $content .= html_writer::label(get_string('backup_category', 'local_batch'), 'category');
@@ -524,6 +531,9 @@ class local_batch_renderer extends plugin_renderer_base {
             'value' => $info['startday'] . '/' . $info['startmonth'] . '/' . $info['startyear']
         );
         $content .= html_writer::empty_tag('input', $params);
+        $url = $this->output->pix_url('i/calendar', 'core');
+        $datepicker = html_writer::empty_tag('img', array('id' => 'batch_toggle_datepicker', 'class' => 'batch_toggle_datepicker', 'src' => $url, 'alt' => 'calendar'));
+        $content .= html_writer::link('#', $datepicker);
         $content .= $this->output->container_end();// close startdate
         $content .= $this->output->container_start('batch_category', 'category');
         $content .= html_writer::label(get_string('backup_category', 'local_batch'), 'category');
