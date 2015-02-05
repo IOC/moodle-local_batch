@@ -129,7 +129,6 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
             M.form.dateselector.panel.set('zIndex', 1);
             Y.one('#dateselector-calendar-panel')
                 .setStyle('border', 0)
-                //.setStyle('position', 'relative')
                 .setStyle('margin', '8px 0 0 3px')
                 .setStyle('background-color', 'transparent')
                 .setStyle('min-height', '210px');

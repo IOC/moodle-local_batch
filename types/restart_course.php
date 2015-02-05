@@ -29,18 +29,18 @@ class batch_type_restart_course extends batch_type_base {
         global $DB;
 
         if (!$course = $DB->get_record('course', array('shortname' => $params->shortname))) {
-            throw new Exception('nonexistent');
+            throw new moodle_exception('error:coursenotexist', 'local_batch', '', $params->shortname);
         }
 
         if (time() - $course->startdate < 30 * 86400) {
-            throw new Exception('started recently');
+            throw new moodle_exception('error:courserestartedrecently', 'local_batch');
         }
 
         $oldshortname = $course->shortname . '~';
         $oldfullname = $course->fullname . strftime(' ~ %B %G');
 
         if ($oldcourse = $DB->get_record('course', array('shortname' => $oldshortname))) {
-            throw new Exception("backup exists");
+            throw new moodle_exception('error:oldcourseexists', 'local_batch');
         }
 
         list($file, $backupid) = batch_course::backup_course($course->id);

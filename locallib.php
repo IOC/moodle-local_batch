@@ -68,7 +68,13 @@ class batch_job {
         $this->timestarted = time();
         $this->save();
         $transaction = $DB->start_delegated_transaction();
-        $type->execute($this->id, $this->category, $this->params);
+        try {
+            $type->execute($this->id, $this->category, $this->params);
+        } catch (moodle_exception $e) {
+            $this->error = $e->getMessage() . ' in file: ' .
+                           $e->getFile() . ' line: ' . $e->getLine() . ' ' . $e->getTraceAsString();
+
+        }
         $transaction->allow_commit();
         $this->timeended = time();
         $this->save();
@@ -109,6 +115,7 @@ class batch_queue {
     const FILTER_ERRORS   = 3;
     const FILTER_ABORTED  = 4;
     const FILTER_TODELETE = 5;
+    const FILTER_NO_WAIT  = 6;
 
     public static function add_job($userid, $category, $type, $params=false) {
         global $DB;
@@ -144,9 +151,9 @@ class batch_queue {
 
     public static function filter_select($filter, $category) {
         $params = array();
-        $time_todelete = time() - BATCH_TODELETE_AGE;
+        $timetodelete = time() - BATCH_TODELETE_AGE;
         $select = "timecreated > :timetodelete";
-        $params['timetodelete'] = $time_todelete;
+        $params['timetodelete'] = $timetodelete;
         if ($filter == self::FILTER_PENDING) {
             $select .= " AND timeended = :timeended";
             $params['timeended'] = 0;
@@ -164,7 +171,10 @@ class batch_queue {
             $params['timeended'] = 0;
         } else if ($filter == self::FILTER_TODELETE) {
             $select = "timecreated <= :timetodelete";
-            $params['timetodelete'] = $time_todelete;
+            $params['timetodelete'] = $timetodelete;
+        } else if ($filter == self::FILTER_NO_WAIT) {
+            $select .= " AND type = 'create_course' AND timeended = :timeended";
+            $params['timeended'] = 0;
         }
         if ($category) {
             $cat = batch_get_category($category);

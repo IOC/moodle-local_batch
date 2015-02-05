@@ -1,5 +1,6 @@
 <?php
 
+$string['aborted'] = 'Abortat';
 $string['add_jobs'] = 'Afegeix tasques';
 $string['backup_category'] = 'Categoria';
 $string['batch:manage'] = 'Gestiona les tasques';
@@ -19,6 +20,9 @@ $string['column_state'] = 'Estat';
 $string['course_display'] = 'Secció per pàgina';
 $string['course_reset'] = 'Curs reiniciat';
 $string['creator'] = 'Creador';
+$string['error:coursenotexist'] = 'El curs {$a} no existeix';
+$string['error:courserestartedrecently'] = 'Curs reiniciat recentment (data d\'inici dins els 30 dies anteriors)';
+$string['error:oldcourseexists'] = 'No es pot reiniciar el curs actual fins que no s\'esborri l\'anterior curs reiniciat';
 $string['filter_all'] = 'Totes';
 $string['filter_errors'] = 'Errors';
 $string['filter_finished'] = 'Finalitzades';

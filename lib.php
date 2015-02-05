@@ -79,6 +79,22 @@ function local_batch_pluginfile($course, $cm, $context, $filearea, $args,
     send_stored_file($file, 0, 0, true, $options);
 }
 
+function local_batch_execute_jobs($jobs) {
+    $starttime = time();
+    foreach ($jobs as $job) {
+        if (time() - $starttime >= BATCH_CRON_TIME) {
+            return;
+        }
+        if ($job->can_start()) {
+            mtrace("batch: executing job {$job->id}... ", "");
+            flush();
+            $job->execute();
+            mtrace($job->error ? "ERROR" : "OK");
+            flush();
+        }
+    }
+}
+
 function local_batch_cron() {
     global $CFG;
 
@@ -92,21 +108,29 @@ function local_batch_cron() {
     foreach ($jobs as $job) {
         mtrace("batch: job {$job->id} aborted");
         $job->timeended = time();
-        $job->error = 'aborted';
+        if (empty($job->error)) {
+            $job->error = get_string('aborted', 'local_batch');
+        }
         $job->save();
     }
 
-    $start_hour = isset($CFG->local_batch_start_hour) ? (int) $CFG->local_batch_start_hour : 0;
-    $stop_hour = isset($CFG->local_batch_stop_hour) ? (int) $CFG->local_batch_stop_hour : 0;
+    $starthour = isset($CFG->local_batch_start_hour) ? (int) $CFG->local_batch_start_hour : 0;
+    $stophour = isset($CFG->local_batch_stop_hour) ? (int) $CFG->local_batch_stop_hour : 0;
     $date = getdate();
     $hour = $date['hours'];
-    if ($start_hour < $stop_hour) {
-        $execute = ($hour >= $start_hour and $hour < $stop_hour);
+    if ($starthour < $stophour) {
+        $execute = ($hour >= $starthour and $hour < $stophour);
     } else {
-        $execute = ($hour >= $start_hour or $hour < $stop_hour);
+        $execute = ($hour >= $starthour or $hour < $stophour);
     }
     if (!$execute) {
-        mtrace("batch: execution will start at $start_hour");
+        $jobs = batch_queue::get_jobs(batch_queue::FILTER_NO_WAIT);
+        if (!empty($jobs)) {
+            mtrace("batch: executing no wait tasks");
+            flush();
+            local_batch_execute_jobs($jobs);
+        }
+        mtrace("batch: execution will start at $starthour");
         flush();
         return;
     }
@@ -118,17 +142,5 @@ function local_batch_cron() {
         return;
     }
 
-    $start_time = time();
-    foreach ($jobs as $job) {
-        if (time() - $start_time >= BATCH_CRON_TIME) {
-            return;
-        }
-        if ($job->can_start()) {
-            mtrace("batch: executing job {$job->id}... ", "");
-            flush();
-            $job->execute();
-            mtrace($job->error ? "ERROR" : "OK");
-            flush();
-        }
-    }
+    local_batch_execute_jobs($jobs);
 }

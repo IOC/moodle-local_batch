@@ -1,5 +1,6 @@
 <?php
 
+$string['aborted'] = 'Aborted';
 $string['add_jobs'] = 'Add jobs';
 $string['backup_category'] = 'Category';
 $string['batch:manage'] = 'Manage tasks';
@@ -19,6 +20,9 @@ $string['column_state'] = 'State';
 $string['course_display'] = 'One section per page';
 $string['course_reset'] = 'Reset Course';
 $string['creator'] = 'Creator';
+$string['error:coursenotexist'] = 'Course {$a} doesn\'t exist';
+$string['error:courserestartedrecently'] = 'Course restarted recently (start date is within 30 days)';
+$string['error:oldcourseexists'] = 'Cannot restart this course while old restarted course exists';
 $string['filter_all'] = 'All';
 $string['filter_errors'] = 'Errors';
 $string['filter_finished'] = 'Ended';

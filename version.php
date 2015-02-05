@@ -21,7 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2013120500;
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version = 2015020500;
 $plugin->requires = 2013051400; // Moodle 2.5
 $plugin->cron = 60;
 $plugin->component = 'local_batch';
