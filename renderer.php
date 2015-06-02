@@ -596,7 +596,7 @@ class local_batch_renderer extends plugin_renderer_base {
     }
 
     public function print_config_courses($courses) {
-        $content = $this->output->container_start('batch_create_courses');
+        $content = $this->output->container_start('batch_config_courses');
         $content .= html_writer::start_tag('form', array('id' => 'form', 'method' => 'post'));
         $params = array(
             'id' => 'sesskey',
@@ -721,6 +721,13 @@ class local_batch_renderer extends plugin_renderer_base {
             $content .= html_writer::end_tag('ul');
         }
         if ($hascourses) {
+            $url = $this->output->pix_url('t/unblock', 'core');
+            $params = array (
+                'id' => 'batch_toggle_category_' . $category->id,
+                'class' => 'batch_toggle_category batch_hidden_toggle',
+                'src' => $url, 'alt' => 'toggle',
+            );
+            $content .= html_writer::empty_tag('img', $params);
             $content .= html_writer::start_tag('ul', array('class' => 'courses'));
             foreach ($category->courses as $course) {
                 $content .= html_writer::start_tag('li', array('class' => 'course'));

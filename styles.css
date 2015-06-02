@@ -105,6 +105,10 @@ ul.params input {
     display: none;
 }
 
+.batch_hidden_toggle {
+    display: none;
+}
+
 .batch_restart_courses input,
 .batch_create_courses input {
     vertical-align: middle;
@@ -125,6 +129,9 @@ ul.params input {
     margin: 0 0.5em;
 }
 
-.batch_toggle_datepicker {
+.batch_toggle_datepicker,
+.batch_toggle_category {
     margin-left: 5px;
+    vertical-align: middle;
+    cursor: pointer;
 }

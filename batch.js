@@ -140,6 +140,7 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
         Y.one('#course-tree').delegate('click', function(e) {
             e.stopPropagation();
             this.ancestor('li').toggleClass('batch_hidden');
+            this.next('img.batch_toggle_category').toggleClass('batch_hidden_toggle');
         }, '.category_group span');
 
         Y.one('#course-tree').delegate('click', function(e) {
@@ -150,6 +151,18 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
             e.stopPropagation();
             Y.all('.category_group').removeClass('batch_hidden');
         }, '.collapseall');
+    }
+
+    if (Y.one('#course-tree')) {
+        Y.one('#course-tree').delegate('click', function(e) {
+            e.stopPropagation();
+            var nodes = this.next('ul.courses').all('input');
+            if (nodes.size() > nodes.get('checked').filter(function(i){return i;}).length) {
+                nodes.set('checked', 'checked');
+            } else {
+                nodes.set('checked', '');
+            }
+        }, '.batch_toggle_category');
     }
 
     init();
