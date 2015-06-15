@@ -79,10 +79,9 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
         datepicker.setXY(position);
     };
 
-    var batch_get_selected_date = function(eventtype, args) {
-        var date = args[0][0];
+    var batch_get_selected_date = function(cell, data) {
         var node = Y.one('input[name="startdate"]');
-        node.set('value', date[2] + '/' + date[1] + '/' + date[0]);
+        node.set('value', cell.date.getDate() + '/' + (cell.date.getMonth()+1) + '/' + cell.date.getFullYear());
         M.form.dateselector.showing = false;
         M.form.dateselector.panel.hide();
     };
@@ -125,7 +124,7 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
 
     Y.on('contentready', function() {
         if (M.form.dateselector.calendar) {
-            M.form.dateselector.calendar.selectEvent.subscribe(batch_get_selected_date);
+            M.form.dateselector.calendar.on('dateClick', batch_get_selected_date);
             M.form.dateselector.panel.set('zIndex', 1);
             Y.one('#dateselector-calendar-panel')
                 .setStyle('border', 0)
