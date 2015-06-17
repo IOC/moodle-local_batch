@@ -28,6 +28,7 @@ class batch_type_restart_course extends batch_type_base {
     public function execute($jobid, $categoryid, $params) {
         global $DB;
 
+        @set_time_limit(0);
         if (!$course = $DB->get_record('course', array('shortname' => $params->shortname))) {
             throw new moodle_exception('error:coursenotexist', 'local_batch', '', $params->shortname);
         }
