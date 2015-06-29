@@ -192,7 +192,7 @@ class batch_queue {
         return new batch_job($record);
     }
 
-    public static function get_jobs($filter, $category = 0, $start=false, $count=false) {
+    public static function get_jobs($filter, $category = 0, $start=0, $count=0) {
         global $DB;
         $jobs = array();
 
