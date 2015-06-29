@@ -114,6 +114,13 @@ ul.params input {
     vertical-align: middle;
 }
 
+.batch_restart_courses label,
+.batch_create_courses label,
+.batch_config_courses label {
+    display: inline-block;
+    margin-right: 0.5em;
+}
+
 .batch_param {
     display: inline-block;
     min-width: 11em;
