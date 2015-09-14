@@ -99,10 +99,12 @@ class batch_job {
 
     public function delete() {
         global $DB;
-        $context = context_coursecat::instance($this->category);
         $DB->delete_records('local_batch_jobs', array('id' => $this->id));
-        $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'local_batch', 'job', $this->id);
+        if ($DB->record_exists('course_categories', array('id' => $this->category))) {
+            $fs = get_file_storage();
+            $context = context_coursecat::instance($this->category);
+            $fs->delete_area_files($context->id, 'local_batch', 'job', $this->id);
+        }
     }
 
 }
