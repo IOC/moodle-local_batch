@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('locallib.php');
+require_once($CFG->dirroot . '/local/batch/locallib.php');
 
 const LOCAL_BATCH_PERPAGE = 10;
 
@@ -77,70 +77,4 @@ function local_batch_pluginfile($course, $cm, $context, $filearea, $args,
     }
 
     send_stored_file($file, 0, 0, true, $options);
-}
-
-function local_batch_execute_jobs($jobs) {
-    $starttime = time();
-    foreach ($jobs as $job) {
-        if (time() - $starttime >= BATCH_CRON_TIME) {
-            return;
-        }
-        if ($job->can_start()) {
-            mtrace("batch: executing job {$job->id}... ", "");
-            flush();
-            $job->execute();
-            mtrace($job->error ? "ERROR" : "OK");
-            flush();
-        }
-    }
-}
-
-function local_batch_cron() {
-    global $CFG;
-
-    $jobs = batch_queue::get_jobs(batch_queue::FILTER_TODELETE);
-    foreach ($jobs as $job) {
-        mtrace("batch: job {$job->id} deleted");
-        $job->delete();
-    }
-
-    $jobs = batch_queue::get_jobs(batch_queue::FILTER_ABORTED);
-    foreach ($jobs as $job) {
-        mtrace("batch: job {$job->id} aborted");
-        $job->timeended = time();
-        if (empty($job->error)) {
-            $job->error = get_string('aborted', 'local_batch');
-        }
-        $job->save();
-    }
-
-    $starthour = isset($CFG->local_batch_start_hour) ? (int) $CFG->local_batch_start_hour : 0;
-    $stophour = isset($CFG->local_batch_stop_hour) ? (int) $CFG->local_batch_stop_hour : 0;
-    $date = getdate();
-    $hour = $date['hours'];
-    if ($starthour < $stophour) {
-        $execute = ($hour >= $starthour and $hour < $stophour);
-    } else {
-        $execute = ($hour >= $starthour or $hour < $stophour);
-    }
-    if (!$execute) {
-        $jobs = batch_queue::get_jobs(batch_queue::FILTER_NO_WAIT);
-        if (!empty($jobs)) {
-            mtrace("batch: executing no wait tasks");
-            flush();
-            local_batch_execute_jobs($jobs);
-        }
-        mtrace("batch: execution will start at $starthour");
-        flush();
-        return;
-    }
-
-    $jobs = batch_queue::get_jobs(batch_queue::FILTER_PENDING);
-    if (!$jobs) {
-        mtrace("batch: no pending jobs");
-        flush();
-        return;
-    }
-
-    local_batch_execute_jobs($jobs);
 }

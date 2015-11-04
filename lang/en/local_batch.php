@@ -20,6 +20,7 @@ $string['column_state'] = 'State';
 $string['course_display'] = 'One section per page';
 $string['course_reset'] = 'Reset Course';
 $string['creator'] = 'Creator';
+$string['crontask'] = 'Background processing batch tasks';
 $string['error:coursenotexist'] = 'Course {$a} doesn\'t exist';
 $string['error:courserestartedrecently'] = 'Course restarted recently (start date is within 30 days)';
 $string['error:oldcourseexists'] = 'Cannot restart this course while old restarted course exists';

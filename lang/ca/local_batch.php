@@ -20,6 +20,7 @@ $string['column_state'] = 'Estat';
 $string['course_display'] = 'Secció per pàgina';
 $string['course_reset'] = 'Curs reiniciat';
 $string['creator'] = 'Creador';
+$string['crontask'] = 'Processament de les tasques per lots';
 $string['error:coursenotexist'] = 'El curs {$a} no existeix';
 $string['error:courserestartedrecently'] = 'Curs reiniciat recentment (data d\'inici dins els 30 dies anteriors)';
 $string['error:oldcourseexists'] = 'No es pot reiniciar el curs actual fins que no s\'esborri l\'anterior curs reiniciat';

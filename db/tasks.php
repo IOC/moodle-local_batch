@@ -15,14 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
- * @subpackage batch
- * @copyright  2014 Institut Obert de Catalunya
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Definition of Forum scheduled tasks.
+ *
+ * @package   local_batch
+ * @category  task
+ * @copyright 2015 Institut Obert de Catalunya
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2015110900;
-$plugin->requires = 2014051200; // Moodle 2.7
-$plugin->component = 'local_batch';
+$tasks = array(
+    array(
+        'classname' => 'local_batch\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);

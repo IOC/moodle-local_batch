@@ -15,14 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
- * @subpackage batch
- * @copyright  2014 Institut Obert de Catalunya
+ * @package    local_batch
+ * @copyright  Institut Obert de Catalunya
+ * @author     Marc Català <mcatala@ioc.cat>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+function xmldb_local_batch_upgrade($oldversion) {
+    global $DB;
 
-$plugin->version = 2015110900;
-$plugin->requires = 2014051200; // Moodle 2.7
-$plugin->component = 'local_batch';
+    return true;
+}
