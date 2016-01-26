@@ -142,3 +142,26 @@ ul.params input {
     vertical-align: middle;
     cursor: pointer;
 }
+
+.batch_error {
+    white-space: pre-wrap;
+}
+
+.batch_error_switcher {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-image: url('../../pix/t/switch_plus.png');
+    margin-right: 0.5em;
+}
+
+.batch_error_switcher_minus {
+    background-image: url('../../pix/t/switch_minus.png');
+}
+
+.batch_collapsed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 35em;
+}

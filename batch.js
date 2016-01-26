@@ -164,5 +164,13 @@ YUI(M.yui.loader).use('node', 'anim', function(Y) {
         }, '.batch_toggle_category');
     }
 
+    if (Y.one('.batch_error')) {
+        Y.all('.batch_error').addClass('batch_collapsed');
+        Y.one('#page-content').delegate('click', function(e) {
+            this.toggleClass('batch_collapsed');
+            this.one('.batch_error_switcher').toggleClass('batch_error_switcher_minus');
+        }, '.batch_error');
+    }
+
     init();
 });

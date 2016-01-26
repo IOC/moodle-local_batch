@@ -87,7 +87,16 @@ class local_batch_renderer extends plugin_renderer_base {
             } else if (!$job->timeended) {
                 $state = get_string('state_executing', 'local_batch');
             } else if ($job->error) {
-                $state = get_string('state_error', 'local_batch', $job->error);
+                if (strlen($job->error) < 30) {
+                    $state = get_string('state_error', 'local_batch', $job->error);
+                } else {
+                    $state = html_writer::start_div('batch_error');
+                    $state .= html_writer::tag('span', '', array('class' => 'batch_error_switcher'));
+                    $state .= html_writer::start_tag('span', array('class' => 'batch_error_message'));
+                    $state .= get_string('state_error', 'local_batch', $job->error);
+                    $state .= html_writer::end_tag('span');
+                    $state .= html_writer::end_div();
+                }
             } else {
                 $seconds = $job->timeended - $job->timestarted;
                 $duration = ($seconds > 60 ? round((float) $seconds / 60) . 'm' : $seconds . 's');
