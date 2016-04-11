@@ -25,7 +25,7 @@ require_once($CFG->dirroot . '/local/batch/locallib.php');
 
 const LOCAL_BATCH_PERPAGE = 10;
 
-function local_batch_extends_settings_navigation($nav, $context) {
+function local_batch_extend_settings_navigation($nav, $context) {
     if (has_capability('moodle/site:config', context_system::instance())) {
         $node = navigation_node::create(get_string('pluginname', 'local_batch'),
                         new moodle_url('/local/batch/index.php',
