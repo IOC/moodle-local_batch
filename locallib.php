@@ -490,6 +490,7 @@ class batch_course {
         $restart = isset($options['restart']);
         $backupid = isset($options['backupid']) ? $options['backupid'] : false;
         $fileisunzip = false;
+        $tmpdir = $CFG->tempdir . '/backup';
 
         if (isset($options['category'])) {
             $catid = $options['category'];
@@ -504,7 +505,7 @@ class batch_course {
         $courseid = restore_dbops::create_new_course($params->fullname, $params->shortname, $catid);
 
         if ($backupid) {
-            $fileisunzip = file_exists("$CFG->tempdir/backup/$backupid/moodle_backup.xml");
+            $fileisunzip = file_exists("$tmpdir/$backupid/moodle_backup.xml");
         }
 
         if ($restart and $fileisunzip) {
@@ -518,12 +519,12 @@ class batch_course {
                     $repository = repository::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID);
                     $pathname = $repository->root_path . $reference;
                 } else {
-                    $pathname = "$CFG->tempdir/backup/" . basename($file->copy_content_to_temp('/backup'));
+                    $pathname = "$tmpdir/" . basename($file->copy_content_to_temp('/backup'));
                 }
             }
             $backupid = restore_controller::get_tempdir_name($context->id, $USER->id);
             $fb = get_file_packer();
-            $files = $fb->extract_to_pathname($pathname, "$CFG->tempdir/backup/$backupid/");
+            $files = $fb->extract_to_pathname($pathname, "$tmpdir/$backupid/");
         }
         $rc = new restore_controller($backupid, $courseid, backup::INTERACTIVE_NO,
                         $mode, $USER->id, backup::TARGET_NEW_COURSE);
@@ -557,12 +558,13 @@ class batch_course {
         $rc->destroy();
 
         // Remove temp backup.
-        if ($files) {
-            if (!$fileisunzip and !$import and !$file->is_external_file()) {
-                fulldelete($pathname);
-            }
-            fulldelete("$CFG->tempdir/backup/$backupid/");
+        if (is_dir("$tmpdir/$backupid")) {
+            fulldelete("$tmpdir/$backupid/");
         }
+        if (isset($files) and !$fileisunzip and !$import and !$file->is_external_file()) {
+            fulldelete($pathname);
+        }
+
         return $courseid;
     }
 
