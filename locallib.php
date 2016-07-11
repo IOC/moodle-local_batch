@@ -27,6 +27,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->dirroot . '/group/lib.php');
 
 define('BATCH_CRON_TIME', 600);
 define('BATCH_TODELETE_AGE', 365 * 86400);
