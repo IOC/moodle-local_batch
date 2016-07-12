@@ -137,7 +137,10 @@ class batch_type_restart_course extends batch_type_base {
                 'startday'   => $params->startday,
                 'startmonth' => $params->startmonth,
                 'startyear'  => $params->startyear,
-                'user'       => $user
+                'user'       => $user,
+                'groups'     => (isset($params->groups) and $params->groups),
+                'materials'  => (isset($params->materials) and $params->materials),
+                'roleassignments' => !empty($params->roleassignments) ? batch_get_roles($params->roleassignments) : '',
             )
         );
     }

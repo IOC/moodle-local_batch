@@ -268,39 +268,42 @@ class local_batch_renderer extends plugin_renderer_base {
                                         'moodle', array('class' => 'icon'));
             $info .= html_writer::start_tag('div')
                 . html_writer::tag('span', get_string('backup'), array('class' => 'batch_param'))
+                . html_writer::start_tag('span', array('class' => 'batch_value'))
                 . html_writer::link($params['fileurl'], $iconimage) . html_writer::link($params['fileurl'], $params['filename'])
+                . html_writer::end_tag('span')
                 . html_writer::end_tag('div');
         }
         if (is_int($params['courseid'])) {
             $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('shortname'), array('class' => 'batch_param'))
-            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['shortname'])
+            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['shortname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
             $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('fullname'), array('class' => 'batch_param'))
-            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['fullname'])
+            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['fullname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         } else {
             $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('shortname'), array('class' => 'batch_param'))
-            . $params['shortname']
+            . html_writer::tag('span', $params['shortname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
             $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('fullname'), array('class' => 'batch_param'))
-            . $params['fullname']
+            . html_writer::tag('span', $params['fullname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         }
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('category'), array('class' => 'batch_param'))
             . html_writer::link($params['url'], $params['categoryname'])
             . html_writer::end_tag('div');
+        $value = $params['startday'] . '/'. $params['startmonth'] . '/' . $params['startyear'];
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('start_date', 'local_batch'), array('class' => 'batch_param'))
-            . $params['startday'] . '/'. $params['startmonth'] . '/' . $params['startyear']
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('creator', 'local_batch'), array('class' => 'batch_param'))
-            . fullname($params['user'])
+            . html_writer::tag('span', fullname($params['user']), array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         return $info;
     }
@@ -345,11 +348,11 @@ class local_batch_renderer extends plugin_renderer_base {
     public function print_info_delete_courses($params) {
         $info = html_writer::start_tag('div')
             . html_writer::tag('span', get_string('shortname'), array('class' => 'batch_param'))
-            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['shortname'])
+            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['shortname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('creator', 'local_batch'), array('class' => 'batch_param'))
-            . fullname($params['user'])
+            . html_writer::tag('span', fullname($params['user']), array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         return $info;
     }
@@ -454,11 +457,12 @@ class local_batch_renderer extends plugin_renderer_base {
     public function print_info_restart_courses($params) {
         $info = html_writer::start_tag('div')
             . html_writer::tag('span', get_string('course'), array('class' => 'batch_param'))
-            . $params['shortname']
+            . html_writer::tag('span', $params['shortname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
+        $value = $params['startday'] . '/'. $params['startmonth'] . '/' . $params['startyear'];
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('start_date', 'local_batch'), array('class' => 'batch_param'))
-            . $params['startday'] . '/'. $params['startmonth'] . '/' . $params['startyear']
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         if (is_int($params['courseid'])) {
             $info .= html_writer::start_tag('div')
@@ -466,9 +470,25 @@ class local_batch_renderer extends plugin_renderer_base {
                 . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['fullname'])
                 . html_writer::end_tag('div');
         }
+        $value = ($params['roleassignments'] ? $params['roleassignments'] : get_string('no'));
+        $info .= html_writer::start_tag('div')
+            . html_writer::tag('span', get_string('roles'), array('class' => 'batch_param'))
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
+            . html_writer::end_tag('div');
+        $value = ($params['groups'] ? get_string('yes') : get_string('no'));
+        $info .= html_writer::start_tag('div')
+            . html_writer::tag('span', get_string('groups'), array('class' => 'batch_param'))
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
+            . html_writer::end_tag('div');
+        $value = ($params['materials'] ? get_string('yes') : get_string('no'));
+        $info .= html_writer::start_tag('div')
+            . html_writer::tag('span', get_string('materials_short', 'local_batch'), array('class' => 'batch_param'))
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
+            . html_writer::end_tag('div');
+        $value = fullname($params['user']);
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('creator', 'local_batch'), array('class' => 'batch_param'))
-            . fullname($params['user'])
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         return $info;
     }
@@ -577,29 +597,31 @@ class local_batch_renderer extends plugin_renderer_base {
         $info = '';
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('backup'), array('class' => 'batch_param'))
-            . $params['filename']
+            . html_writer::tag('span', $params['filename'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         if (is_int($params['courseid'])) {
             $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('fullname'), array('class' => 'batch_param'))
-            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['fullname'])
+            . html_writer::link(new moodle_url('/course/view.php', array('id' => $params['courseid'])), $params['fullname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         }
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('category'), array('class' => 'batch_param'))
-            . html_writer::link($params['url'], $params['categoryname'])
+            . html_writer::link($params['url'], $params['categoryname'], array('class' => 'batch_value'))
             . html_writer::end_tag('div');
+        $value = $params['startday'] . '/'. $params['startmonth'] . '/' . $params['startyear'];
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('start_date', 'local_batch'), array('class' => 'batch_param'))
-            . $params['startday'] . '/'. $params['startmonth'] . '/' . $params['startyear']
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
             . html_writer::end_tag('div');
+        $value = ($params['coursedisplay'] ? get_string('yes') : get_string('no'));
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('course_display', 'local_batch'), array('class' => 'batch_param'))
-            . ($params['coursedisplay'] ? get_string('yes') : get_string('no'))
+            . html_writer::tag('span', $value, array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         $info .= html_writer::start_tag('div')
             . html_writer::tag('span', get_string('creator', 'local_batch'), array('class' => 'batch_param'))
-            . fullname($params['user'])
+            . html_writer::tag('span', fullname($params['user']), array('class' => 'batch_value'))
             . html_writer::end_tag('div');
         return $info;
     }

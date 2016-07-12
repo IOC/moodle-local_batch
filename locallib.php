@@ -336,6 +336,17 @@ function batch_get_user($userid) {
     return $DB->get_record('user', $conditions, '*', MUST_EXIST);
 }
 
+function batch_get_roles($roleids) {
+    global $DB;
+    $sql = "SELECT name"
+         . " FROM {role}"
+         . " WHERE id IN (" . $roleids . ")";
+    if ($records = $DB->get_fieldset_sql($sql)) {
+        return implode(',', $records);
+    }
+    return false;
+}
+
 function batch_get_category_and_subcategories_info($category) {
     global $DB;
 

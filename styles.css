@@ -127,6 +127,15 @@ ul.params input {
     font-weight: bold;
 }
 
+.batch_value {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+    max-width: 70%;
+}
+
 .batch_category {
     clear: both;
     padding-top: 1em;
