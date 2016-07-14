@@ -174,3 +174,8 @@ ul.params input {
     text-overflow: ellipsis;
     width: 35em;
 }
+
+.batch_pending,
+.batch_starthour {
+    margin-left: 1em;
+}

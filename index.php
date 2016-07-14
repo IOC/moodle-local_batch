@@ -94,9 +94,15 @@ if ($view == 'job_queue') {
     $count = batch_queue::count_jobs($filter, $category);
     $jobs = batch_queue::get_jobs($filter, $category, $page * LOCAL_BATCH_PERPAGE, LOCAL_BATCH_PERPAGE);
 
+    $mypending = 0;
+    $totalpending = batch_queue::count_jobs(batch_queue::FILTER_PENDING, 0);
+    if ($totalpending) {
+        $mypending = batch_queue::count_jobs(batch_queue::FILTER_PENDING, 0, $USER->id);
+    }
+
     echo $OUTPUT->header();
     echo $batchoutput->print_header($view, $category);
-    echo $batchoutput->print_job_queue($jobs, $count, $page, $filter, $category);
+    echo $batchoutput->print_job_queue($jobs, $count, $page, $filter, $category, $totalpending, $mypending);
 } else if ($view == 'create_courses') {
     list($csvfile, $data) = batch_create_courses_get_data();
     if (!$csvfile and $data) {

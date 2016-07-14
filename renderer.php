@@ -132,11 +132,26 @@ class local_batch_renderer extends plugin_renderer_base {
         return $content;
     }
 
-    public function print_job_queue($jobs, $count, $page, $filter, $category) {
+    public function print_job_queue($jobs, $count, $page, $filter, $category, $totalpending, $mypending) {
         $url = $this->url('job_queue')->out();
         $content = html_writer::start_tag('form', array('id' => 'queue-filter', 'action' => $url));
         $content .= $this->print_filter_select($filter);
         $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'category', 'value' => $category));
+        if ($totalpending) {
+            $content .= html_writer::start_tag('span', array('class' => 'batch_pending alert alert-info'));
+            $content .= get_string('total_pending', 'local_batch', $totalpending) . ' ';
+            if ($mypending) {
+                $content .= get_string('my_pending', 'local_batch', $mypending);
+            } else {
+                $content .= get_string('no_my_pending', 'local_batch');
+            }
+            $content .= html_writer::end_tag('span');
+        }
+        $starthour = isset($CFG->local_batch_start_hour) ? (int) $CFG->local_batch_start_hour : 0;
+        $stophour = isset($CFG->local_batch_stop_hour) ? (int) $CFG->local_batch_stop_hour : 0;
+        if ($starthour != $stophour) {
+            $content .= html_writer::tag('span', get_string('start_hour', 'local_batch', $starthour), array('class' => 'batch_starthour alert alert-info'));
+        }
         $content .= html_writer::start_tag('noscript');
         $content .= html_writer::empty_tag('input', array(
                 'type' => 'submit',

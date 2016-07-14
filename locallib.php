@@ -146,13 +146,13 @@ class batch_queue {
         }
     }
 
-    public static function count_jobs($filter, $category = 0) {
+    public static function count_jobs($filter, $category = 0, $owner = false) {
         global $DB;
-        list($select, $params) = self::filter_select($filter, $category);
+        list($select, $params) = self::filter_select($filter, $category, $owner);
         return $DB->count_records_select('local_batch_jobs', $select, $params);
     }
 
-    public static function filter_select($filter, $category) {
+    public static function filter_select($filter, $category, $owner = false) {
         $params = array();
         $timetodelete = time() - BATCH_TODELETE_AGE;
         $select = "timecreated > :timetodelete";
@@ -184,6 +184,10 @@ class batch_queue {
             $categories = coursecat::make_categories_list('moodle/category:manage', $cat);
             $cats = array_keys($categories);
             $select .= ' AND category IN(' . implode(',', $cats) . ')';
+        }
+        if ($owner) {
+            $select .= ' AND user = :owner';
+            $params['owner'] = $owner;
         }
         return array($select, $params);
     }
