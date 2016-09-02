@@ -539,7 +539,7 @@ class batch_course {
                 }
             }
             $backupid = restore_controller::get_tempdir_name($context->id, $USER->id);
-            $fb = get_file_packer();
+            $fb = get_file_packer('application/vnd.moodle.backup');
             $files = $fb->extract_to_pathname($pathname, "$tmpdir/$backupid/");
         }
         $rc = new restore_controller($backupid, $courseid, backup::INTERACTIVE_NO,
