@@ -51,7 +51,7 @@ class batch_type_create_course extends batch_type_base {
         }
         $categoryname = $DB->get_field('course_categories', 'name' , array('id' => $params->category));
         $user = batch_get_user($params->user);
-        $url = new moodle_url('/course/category.php', array('id' => $params->category));
+        $url = new moodle_url('/course/index.php', array('categoryid' => $params->category));
 
         $batchoutput = $PAGE->get_renderer('local_batch');
 

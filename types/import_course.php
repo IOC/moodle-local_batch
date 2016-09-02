@@ -55,7 +55,7 @@ class batch_type_import_course extends batch_type_base {
         $context = context_coursecat::instance($params->category);
         $categoryname = $DB->get_field('course_categories', 'name' , array('id' => $params->category));
         $user = batch_get_user($params->user);
-        $url = new moodle_url('/course/category.php', array('id' => $params->category));
+        $url = new moodle_url('/course/index.php', array('categoryid' => $params->category));
         $batchoutput = $PAGE->get_renderer('local_batch');
 
         return $batchoutput->print_info_import_courses(
