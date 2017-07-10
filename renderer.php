@@ -258,7 +258,7 @@ class local_batch_renderer extends plugin_renderer_base {
             'value' => $info['startday'] . '/' . $info['startmonth'] . '/' . $info['startyear']
         );
         $content .= html_writer::empty_tag('input', $params);
-        $url = $this->output->pix_url('i/calendar', 'core');
+        $url = $this->output->image_url('i/calendar', 'core');
         $datepicker = html_writer::empty_tag('img', array('id' => 'batch_toggle_datepicker', 'class' => 'batch_toggle_datepicker', 'src' => $url, 'alt' => 'calendar'));
         $content .= html_writer::link('#', $datepicker);
         $content .= $this->output->container_end('section');
@@ -407,7 +407,7 @@ class local_batch_renderer extends plugin_renderer_base {
             'value' => $info['startday'] . '/' . $info['startmonth'] . '/' . $info['startyear']
         );
         $content .= html_writer::empty_tag('input', $params);
-        $url = $this->output->pix_url('i/calendar', 'core');
+        $url = $this->output->image_url('i/calendar', 'core');
         $datepicker = html_writer::empty_tag('img', array('id' => 'batch_toggle_datepicker', 'class' => 'batch_toggle_datepicker', 'src' => $url, 'alt' => 'calendar'));
         $content .= html_writer::link('#', $datepicker);
         $content .= $this->output->container_end();// close startdate
@@ -575,7 +575,7 @@ class local_batch_renderer extends plugin_renderer_base {
             'value' => $info['startday'] . '/' . $info['startmonth'] . '/' . $info['startyear']
         );
         $content .= html_writer::empty_tag('input', $params);
-        $url = $this->output->pix_url('i/calendar', 'core');
+        $url = $this->output->image_url('i/calendar', 'core');
         $datepicker = html_writer::empty_tag('img', array('id' => 'batch_toggle_datepicker', 'class' => 'batch_toggle_datepicker', 'src' => $url, 'alt' => 'calendar'));
         $content .= html_writer::link('#', $datepicker);
         $content .= $this->output->container_end();// close startdate
@@ -767,7 +767,7 @@ class local_batch_renderer extends plugin_renderer_base {
             $content .= html_writer::end_tag('ul');
         }
         if ($hascourses) {
-            $url = $this->output->pix_url('t/unblock', 'core');
+            $url = $this->output->image_url('t/unblock', 'core');
             $params = array (
                 'id' => 'batch_toggle_category_' . $category->id,
                 'class' => 'batch_toggle_category batch_hidden_toggle',
