@@ -37,6 +37,7 @@ $string['nobackupfolder'] = 'No backup folder configured';
 $string['parameters'] = 'Parameters';
 $string['pluginname'] = 'Batch jobs';
 $string['prefix'] = 'Prefix';
+$string['privacy:metadata'] = 'Batch jobs plugin does not store any personal data.';
 $string['remove'] = 'Remove';
 $string['retry'] = 'Retry';
 $string['start_date'] = 'Start date';

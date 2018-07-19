@@ -15,14 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
- * @subpackage batch
- * @copyright  2014 Institut Obert de Catalunya
+ * Privacy Subsystem implementation for local_batch.
+ *
+ * @package    local_batch
+ * @copyright  2018 Institut Obert de Catalunya
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_batch\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2016071402;
-$plugin->requires = 2018051700; // Moodle 3.5
-$plugin->component = 'local_batch';
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

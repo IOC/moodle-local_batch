@@ -37,6 +37,7 @@ $string['nobackupfolder'] = 'No hi ha cap carpeta de backups configurada';
 $string['parameters'] = 'Paràmetres';
 $string['pluginname'] = 'Tasques per lots';
 $string['prefix'] = 'Prefix';
+$string['privacy:metadata'] = 'Tasques per lots no enregistra cap dada personal.';
 $string['remove'] = 'Suprimeix';
 $string['retry'] = 'Reintenta';
 $string['start_date'] = 'Data d\'inici';
