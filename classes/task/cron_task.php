@@ -72,13 +72,14 @@ class cron_task extends \core\task\scheduled_task {
             $execute = ($hour >= $starthour or $hour < $stophour);
         }
 
+        $jobs = \batch_queue::get_jobs(\batch_queue::FILTER_PRIORITIZED);
+        if (!empty($jobs)) {
+            mtrace("batch: executing prioritized tasks");
+            flush();
+            $this->local_batch_execute_jobs($jobs);
+        }
+
         if (!$execute) {
-            $jobs = \batch_queue::get_jobs(\batch_queue::FILTER_NO_WAIT);
-            if (!empty($jobs)) {
-                mtrace("batch: executing no wait tasks");
-                flush();
-                $this->local_batch_execute_jobs($jobs);
-            }
             mtrace("batch: execution will start at $starthour");
             flush();
             return;

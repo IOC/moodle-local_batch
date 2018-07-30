@@ -23,6 +23,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2016071402;
+$plugin->version = 2016071403;
 $plugin->requires = 2018051700; // Moodle 3.5
 $plugin->component = 'local_batch';
