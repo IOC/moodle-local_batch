@@ -26,6 +26,10 @@ ul.params input {
     margin: 0;
 }
 
+.queue-jobs .paging {
+    margin: 15px 0;
+}
+
 #queue-table td,
 #queue-table th {
     padding: 5px 10px;
@@ -34,6 +38,58 @@ ul.params input {
 #queue-table {
     width: 100%;
     margin: 0 auto;
+}
+
+#queue-table .header {
+    background-color: rgba(217, 237, 247, 0.8);
+}
+
+#queue-table tr td,
+#queue-table .header {
+    border-color: rgb(217, 237, 255);
+    border-width: 1px;
+}
+
+#queue-table .ok {
+    background-color: rgba(158, 255, 185, 0.1);
+}
+
+#queue-table .ok:hover,
+#queue-table tbody tr.ok:hover > td {
+    background-color: rgba(158, 255, 185, 0.4);
+}
+
+#queue-table .ko {
+    background-color: rgba(255, 185, 185, 0.1);
+}
+
+#queue-table .ko:hover,
+#queue-table tbody tr.ko:hover > td {
+    background-color: rgba(255, 185, 185, 0.4);
+}
+
+#queue-table .priority {
+    background-color: rgba(255, 255, 0, 0.1);
+}
+
+#queue-table .priority:hover,
+#queue-table tbody tr.priority:hover > td {
+    background-color: rgba(255, 255, 0, 0.4);
+}
+
+#queue-table .lastcol {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#queue-table .lastcol a {
+    display: block;
+    height: 40px;
+    line-height: 40px;
+}
+#queue-table tbody tr:hover,
+#queue-table tbody tr:hover > td {
+    background-color: rgba(217, 237, 247, 0.4);
 }
 
 #queue-filter {

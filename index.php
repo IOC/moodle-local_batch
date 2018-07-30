@@ -26,12 +26,14 @@ require_once('lib.php');
 
 require_login();
 
-$canceljob = optional_param('cancel_job', 0, PARAM_INT);
-$category   = optional_param('category', 0, PARAM_INT);
-$filter     = optional_param('filter', batch_queue::FILTER_ALL, PARAM_INT);
-$page       = optional_param('page', 0, PARAM_INT);
-$retryjob  = optional_param('retry_job', 0, PARAM_INT);
-$view       = optional_param('view', 'job_queue', PARAM_ALPHAEXT);
+$canceljob         = optional_param('cancel_job', 0, PARAM_INT);
+$category          = optional_param('category', 0, PARAM_INT);
+$filter            = optional_param('filter', batch_queue::FILTER_ALL, PARAM_INT);
+$page              = optional_param('page', 0, PARAM_INT);
+$retryjob          = optional_param('retry_job', 0, PARAM_INT);
+$view              = optional_param('view', 'job_queue', PARAM_ALPHAEXT);
+$prioritizejob     = optional_param('prioritize_job', 0, PARAM_INT);
+$desprioritizejob  = optional_param('desprioritize_job', 0, PARAM_INT);
 
 $context = context_system::instance();
 
@@ -70,7 +72,7 @@ if ($view == 'job_queue') {
 
     if ($canceljob) {
         require_sesskey();
-        batch_queue::cancel_job($canceljob, $context);
+        batch_queue::cancel_job($canceljob);
         $params = array(
             'view' => 'job_queue',
             'filter' => $filter,
@@ -91,6 +93,31 @@ if ($view == 'job_queue') {
         );
         redirect(new moodle_url('/local/batch/index.php', $params));
     }
+
+    if ($prioritizejob) {
+        require_sesskey();
+        batch_queue::prioritize_job($prioritizejob, true);
+        $params = array(
+            'view' => 'job_queue',
+            'filter' => $filter,
+            'page' => $page,
+            'category' => $category
+        );
+        redirect(new moodle_url('/local/batch/index.php', $params));
+    }
+
+    if ($desprioritizejob) {
+        require_sesskey();
+        batch_queue::prioritize_job($desprioritizejob, false);
+        $params = array(
+            'view' => 'job_queue',
+            'filter' => $filter,
+            'page' => $page,
+            'category' => $category
+        );
+        redirect(new moodle_url('/local/batch/index.php', $params));
+    }
+
     $count = batch_queue::count_jobs($filter, $category);
     $jobs = batch_queue::get_jobs($filter, $category, $page * LOCAL_BATCH_PERPAGE, LOCAL_BATCH_PERPAGE);
 
@@ -111,7 +138,7 @@ if ($view == 'job_queue') {
             $params->startday = $data['startday'];
             $params->startmonth = $data['startmonth'];
             $params->startyear = $data['startyear'];
-            $job = batch_queue::add_job($USER->id, $params->category, 'create_course', (object) $params);
+            $job = batch_queue::add_job($USER->id, $params->category, 'create_course', (object) $params, true);
             $context = context_coursecat::instance($params->category);
             file_prepare_draft_area($draftareaid, $context->id, 'local_batch', 'job', $job->id);
             file_save_draft_area_files($draftareaid, $context->id, 'local_batch', 'job', $job->id);

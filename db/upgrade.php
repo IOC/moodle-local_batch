@@ -24,5 +24,21 @@
 function xmldb_local_batch_upgrade($oldversion) {
     global $DB;
 
+    if ($oldversion < 2016071403) {
+
+        $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
+
+        // Define field priority to be added to local_batch_jobs.
+        $table = new xmldb_table('local_batch_jobs');
+        $field = new xmldb_field('priority', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timeended');
+
+        // Conditionally launch add field priority.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2016071403, 'local', 'batch');
+    }
+
     return true;
 }

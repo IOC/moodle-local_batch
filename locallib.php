@@ -54,6 +54,7 @@ class batch_job {
         $this->timestarted = $record->timestarted ?
             $record->timestarted : false;
         $this->timeended = $record->timeended ? $record->timeended : false;
+        $this->priority = $record->priority;
         $this->error = $record->error;
     }
 
@@ -112,15 +113,15 @@ class batch_job {
 
 class batch_queue {
 
-    const FILTER_ALL      = 0;
-    const FILTER_PENDING  = 1;
-    const FILTER_FINISHED = 2;
-    const FILTER_ERRORS   = 3;
-    const FILTER_ABORTED  = 4;
-    const FILTER_TODELETE = 5;
-    const FILTER_NO_WAIT  = 6;
+    const FILTER_ALL         = 0;
+    const FILTER_PENDING     = 1;
+    const FILTER_FINISHED    = 2;
+    const FILTER_ERRORS      = 3;
+    const FILTER_ABORTED     = 4;
+    const FILTER_TODELETE    = 5;
+    const FILTER_PRIORITIZED = 6;
 
-    public static function add_job($userid, $category, $type, $params=false) {
+    public static function add_job($userid, $category, $type, $params=false, $priority=false) {
         global $DB;
         $record = (object) array('user' => $userid,
                                  'category' => $category,
@@ -129,6 +130,7 @@ class batch_queue {
                                  'timecreated' => time(),
                                  'timestarted' => 0,
                                  'timeended' => 0,
+                                 'priority' => $priority,
                                  'error' => '');
         $record->id = $DB->insert_record('local_batch_jobs', $record);
         return new batch_job($record);
@@ -175,8 +177,9 @@ class batch_queue {
         } else if ($filter == self::FILTER_TODELETE) {
             $select = "timecreated <= :timetodelete";
             $params['timetodelete'] = $timetodelete;
-        } else if ($filter == self::FILTER_NO_WAIT) {
-            $select .= " AND type = 'create_course' AND timeended = :timeended";
+        } else if ($filter == self::FILTER_PRIORITIZED) {
+            $select .= " AND priority = :priority AND timeended = :timeended";
+            $params['priority'] = true;
             $params['timeended'] = 0;
         }
         if ($category) {
@@ -203,7 +206,7 @@ class batch_queue {
         global $DB;
         $jobs = array();
 
-        $sort = ($filter == self::FILTER_PENDING) ? 'timecreated, id ASC' : 'timecreated DESC, id DESC';
+        $sort = ($filter == self::FILTER_PENDING || $filter == self::FILTER_PRIORITIZED) ? 'priority DESC, timecreated, id ASC' : 'timecreated DESC, id DESC';
         list($select, $params) = self::filter_select($filter, $category);
         $records = $DB->get_records_select('local_batch_jobs', $select, $params,
                                       $sort, '*', $start, $count);
@@ -232,6 +235,18 @@ class batch_queue {
                     );
                     $file = array_shift($af);
                     $fs->create_file_from_storedfile((object) $newfile, $file->get_id());
+                }
+            }
+        }
+    }
+
+    public static function prioritize_job($id, $value) {
+        global $DB;
+        if (has_capability('moodle/site:config', context_system::instance())) {
+            if ($job = self::get_job($id)) {
+                $context = context_coursecat::instance($job->category);
+                if (has_capability('moodle/category:manage', $context) and $job->timestarted == 0) {
+                    $DB->set_field('local_batch_jobs', 'priority', $value, array('id' => $job->id));
                 }
             }
         }

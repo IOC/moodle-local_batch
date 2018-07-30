@@ -58,12 +58,17 @@ class local_batch_renderer extends plugin_renderer_base {
             batch_queue::FILTER_PENDING => get_string('filter_pending', 'local_batch'),
             batch_queue::FILTER_FINISHED => get_string('filter_finished', 'local_batch'),
             batch_queue::FILTER_ERRORS => get_string('filter_errors', 'local_batch'),
+            batch_queue::FILTER_PRIORITIZED => get_string('filter_prioritized', 'local_batch'),
         );
         return html_writer::select($options, 'filter', $filter, '', array('id' => 'local_batch_filter'));
     }
 
     public function print_table($jobs, $count, $page, $filter, $category) {
-        $content = '';
+        $content = html_writer::start_div('queue-jobs');
+        $url = $this->url('job_queue', array('filter' => $filter,
+                                                'category' => $category));
+        $pagingbar = new paging_bar($count, $page, LOCAL_BATCH_PERPAGE, $url);
+        $content .= $this->output->render($pagingbar);
         $table = new html_table();
         $table->id = 'queue-table';
         $table->attributes = array('class' => 'generaltable');
@@ -103,6 +108,7 @@ class local_batch_renderer extends plugin_renderer_base {
                 $state = get_string('state_finished', 'local_batch', $duration);
             }
 
+            $row = new html_table_row();
             if ($job->timestarted == 0) {
                 $url = $this->url(false, array('cancel_job' => $job->id,
                                                     'filter' => $filter,
@@ -110,6 +116,21 @@ class local_batch_renderer extends plugin_renderer_base {
                                                     'sesskey' => sesskey(),
                                                     'category' => $category));
                 $action = html_writer::link($url, get_string('cancel', 'local_batch'), array('title' => get_string('cancel', 'local_batch')));
+                if (has_capability('moodle/site:config', context_system::instance())) {
+                    $customaction = 'prioritize';
+                    if ($job->priority) {
+                        $customaction = 'desprioritize';
+                    }
+                    $url = $this->url(false, array($customaction . '_job' => $job->id,
+                                                    'filter' => $filter,
+                                                    'page' => $page,
+                                                    'sesskey' => sesskey(),
+                                                    'category' => $category));
+                    $action .= html_writer::link($url, get_string($customaction, 'local_batch'), array('title' => get_string($customaction, 'local_batch')));
+                }
+                if ($job->priority) {
+                    $row->attributes = array('class' => 'priority');
+                }
             } else if ($job->timeended > 0 and $job->error) {
                 $url = $this->url(false, array('retry_job' => $job->id,
                                                     'filter' => $filter,
@@ -117,8 +138,12 @@ class local_batch_renderer extends plugin_renderer_base {
                                                     'sesskey' => sesskey(),
                                                     'category' => $category));
                 $action = html_writer::link($url, get_string('retry', 'local_batch'), array('title' => get_string('retry', 'local_batch')));
+                $row->attributes = array('class' => 'ko');
+            } else {
+                $row->attributes = array('class' => 'ok');
             }
-            $table->data[] = array($timestarted, $strtype, $strparams, $state, $action);
+            $row->cells = array($timestarted, $strtype, $strparams, $state, $action);
+            $table->data[] = $row;
         }
         if ($table->data) {
             $content .= html_writer::table($table);
@@ -129,6 +154,7 @@ class local_batch_renderer extends plugin_renderer_base {
                                                 'category' => $category));
         $pagingbar = new paging_bar($count, $page, LOCAL_BATCH_PERPAGE, $url);
         $content .= $this->output->render($pagingbar);
+        $content .= html_writer::end_div();
         return $content;
     }
 
