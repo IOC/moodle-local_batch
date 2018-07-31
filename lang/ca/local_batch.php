@@ -21,6 +21,7 @@ $string['course_display'] = 'Secció per pàgina';
 $string['course_reset'] = 'Curs reiniciat';
 $string['creator'] = 'Creador';
 $string['crontask'] = 'Processament de les tasques per lots';
+$string['default_theme'] = 'Tema per defecte';
 $string['desprioritize'] = 'Desprioritzar';
 $string['error:coursenotexist'] = 'El curs {$a} no existeix';
 $string['error:courserestartedrecently'] = 'Curs reiniciat recentment (data d\'inici dins els 30 dies anteriors)';

@@ -21,6 +21,7 @@ $string['course_display'] = 'One section per page';
 $string['course_reset'] = 'Reset Course';
 $string['creator'] = 'Creator';
 $string['crontask'] = 'Background processing batch tasks';
+$string['default_theme'] = 'Default theme';
 $string['desprioritize'] = 'Desprioritize';
 $string['error:coursenotexist'] = 'Course {$a} doesn\'t exist';
 $string['error:courserestartedrecently'] = 'Course restarted recently (start date is within 30 days)';
