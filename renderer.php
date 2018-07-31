@@ -667,7 +667,8 @@ class local_batch_renderer extends plugin_renderer_base {
         return $info;
     }
 
-    public function print_config_courses($courses) {
+    public function print_config_courses($courses, $themes) {
+        global $CFG;
         $content = $this->output->container_start('batch_config_courses');
         $content .= html_writer::start_tag('form', array('id' => 'form', 'method' => 'post'));
         $params = array(
@@ -720,6 +721,19 @@ class local_batch_renderer extends plugin_renderer_base {
         );
         $content .= html_writer::select($options, 'visible', '', array('' => ''), array('id' => 'visible'));
         $content .= $this->output->container_end();// close course-visible
+        if (!empty($CFG->allowcoursethemes)) {
+            $content .= $this->output->container_start('course-theme');
+            $content .= html_writer::label(get_string('theme'), 'visible');
+            $content .= html_writer::select($themes, 'theme', '', array('' => ''), array('id' => 'theme', 'class' => 'batch_theme'));
+            $params = array(
+                'id'   => 'default_theme',
+                'type' => 'checkbox',
+                'name' => 'default_theme'
+            );
+            $content .= html_writer::empty_tag('input', $params);
+            $content .= html_writer::label(get_string('default_theme', 'local_batch'), 'default_theme');
+            $content .= $this->output->container_end();// close course-theme
+        }
         $content .= $this->output->container_start('section');
         $params = array(
             'type' => 'submit',

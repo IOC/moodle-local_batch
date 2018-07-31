@@ -201,6 +201,10 @@ ul.params input {
     margin: 0 0.5em;
 }
 
+.batch_theme {
+    margin-right: 0.5em;
+}
+
 .batch_toggle_datepicker,
 .batch_toggle_category {
     margin-left: 5px;

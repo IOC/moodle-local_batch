@@ -501,6 +501,16 @@ class batch_course {
         }
     }
 
+    public static function set_theme($courseid, $theme) {
+        global $DB;
+        $themes = array_keys(core_component::get_plugin_list('theme'));
+        if (empty($theme) || in_array($theme, $themes)) {
+            if (!$DB->set_field('course', 'theme', $theme, array('id' => $courseid))) {
+                throw new Exception('set theme');
+            }
+        }
+    }
+
     public static function rename_course($courseid, $shortname, $fullname) {
         global $DB;
 

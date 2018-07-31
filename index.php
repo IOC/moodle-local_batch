@@ -303,6 +303,11 @@ if ($view == 'job_queue') {
                 } else if ($data['visible'] == 'no') {
                     batch_course::hide_course($courseid);
                 }
+                if (!empty($data['default_theme'])) {
+                    batch_course::set_theme($courseid, '');
+                } else if (!empty($data['theme'])) {
+                    batch_course::set_theme($courseid, $data['theme']);
+                }
                 $courses = true;
             }
         }
@@ -326,7 +331,9 @@ if ($view == 'job_queue') {
         echo $OUTPUT->header();
         echo $batchoutput->print_header($view, $category);
         $courses = batch_get_category_and_subcategories_info($category);
-        echo $batchoutput->print_config_courses($courses);
+        $themes = core_component::get_plugin_list('theme');
+        $themes = array_combine(array_keys($themes), array_keys($themes));
+        echo $batchoutput->print_config_courses($courses, $themes);
     }
 }
 echo $OUTPUT->footer();
